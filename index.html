@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clasificación de Competidores</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Clasificación de Competidores</h1>
+    <form id="competidorForm">
+      <!-- Campos del formulario (número, nombre, cédula, ciudad) -->
+      <label for="numero">Número:</label>
+      <input type="number" id="numero" required min="1">
+      
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" required>
+      
+      <label for="cedula">Cédula:</label>
+      <input type="text" id="cedula" required>
+      
+      <label for="ciudad">Ciudad:</label>
+      <input type="text" id="ciudad" required>
+      
+      <!-- Selector de categoría -->
+      <label for="categoria">Categoría:</label>
+      <select id="categoria" required>
+        <option value="">Seleccione...</option>
+        <option value="bodybuilding">Bodybuilding</option>
+        <option value="classic_physique">Classic Physique</option>
+        <option value="mens_physique">Men's Physique</option>
+        <option value="wellness">Wellness</option>
+        <option value="bikini">Bikini</option>
+        <option value="figure">Figure</option>
+        <option value="fit_model">Fit Model</option>
+        <option value="wheelchair">Wheelchair</option>
+      </select>
+      
+      <!-- Campos condicionales (peso/estatura) -->
+      <div id="pesoContainer" style="display:none;">
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso" min="1" step="0.1">
+      </div>
+      
+      <div id="estaturaContainer" style="display:none;">
+        <label for="estatura">Estatura (m):</label>
+        <input type="number" id="estatura" min="1" step="0.01">
+      </div>
+      
+      <!-- División y subdivisión -->
+      <div id="divisionContainer">
+        <label for="division">División:</label>
+        <select id="division" required>
+          <option value="Prejuvenil">Prejuvenil</option>
+          <option value="Juvenil">Juvenil</option>
+          <option value="Semi-novatos">Semi-novatos</option>
+          <option value="Novato" selected>Novato</option>
+          <option value="Avanzado">Avanzado</option>
+          <option value="Master">Master</option>
+        </select>
+      </div>
+      
+      <div id="subdivisionContainer" style="display:none;">
+        <label for="subdivision">Subdivisión:</label>
+        <input type="text" id="subdivision" readonly>
+      </div>
+      
+      <button type="submit">Guardar Competidor</button>
+      
+      <!-- Botones de acciones -->
+      <div class="data-buttons">
+        <button type="button" id="exportarJsonBtn">Exportar JSON</button>
+        <button type="button" id="exportarExcelBtn">Exportar Excel</button>
+        <button type="button" id="importarBtn">Importar</button>
+        <button type="button" id="clasificarBtn">Clasificar Automático</button>
+        <button type="button" id="clasificarTodosBtn" class="btn-purple">Clasificar Todos</button>
+        <input type="file" id="importarInput" accept=".json,.xlsx" style="display: none;">
+        <button type="button" id="borrarTodosBtn" class="btn-red">Borrar Todos</button>
+        <input type="file" id="importarInput" accept=".json,.xlsx" style="display: none;">
+      </div>
+    </form>
+    
+    <!-- Botones de generación y exportación -->
+    <div class="action-buttons">
+      <button id="generarClasificacionBtn" class="btn-blue">Generar Clasificación Final</button>
+      <button id="exportarClasificacionBtn" class="btn-green">Exportar Clasificación</button>
+    </div>
+    
+    <!-- Tabla de competidores -->
+    <h2>Lista de Competidores</h2>
+    <input type="text" id="buscador" placeholder="Buscar competidor...">
+    <div class="table-container">
+      <table id="competidorTable">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Nombre</th>
+            <th>Cédula</th>
+            <th>Ciudad</th>
+            <th>Categoría</th>
+            <th>Peso</th>
+            <th>Estatura</th>
+            <th>División</th>
+            <th>Subdivisión</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    
+    <!-- Contenedor de clasificación final -->
+    <div id="clasificacionFinalContainer" style="display: none;">
+      <h2>Clasificación Final</h2>
+      <div id="tablasClasificacion"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
