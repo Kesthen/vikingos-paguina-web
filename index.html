@@ -1,0 +1,2722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vikingos Classic — Fisicoculturismo y Fitness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --red:#C0392B;--red-bright:#E74C3C;
+  --gold:#C9A84C;--gold-light:#F0C040;
+  --dark:#060606;--dark2:#0b0b0b;--dark3:#121212;--dark4:#181818;
+  --gray:#888;--gray2:#444;
+  --light:#EDE8DF;--white:#FFFFFF;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--dark);color:var(--light);font-family:'Rajdhani',sans-serif;overflow-x:hidden;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--dark);}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px;}
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.2rem 5vw;transition:background .4s,padding .3s,box-shadow .4s;
+}
+nav.scrolled{
+  background:rgba(6,6,6,.85);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  border-bottom:1px solid rgba(201,168,76,.15);
+  padding:.8rem 5vw;
+  box-shadow:0 10px 30px rgba(0,0,0,0.8);
+}
+.nav-logo{display:flex;align-items:center;text-decoration:none;}
+.nav-logo img{
+  height:48px;width:auto;
+  filter:drop-shadow(0 0 10px rgba(192,57,43,.4));
+  mix-blend-mode:screen;
+}
+.nav-links{display:flex;gap:2.8rem;list-style:none;}
+.nav-links a{
+  font-family:'Cinzel',serif;font-size:.68rem;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);text-decoration:none;
+  transition:color .2s;position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;left:0;right:0;
+  height:1px;background:var(--gold);
+  transform:scaleX(0);transform-origin:left;transition:transform .25s;
+}
+.nav-links a:hover{color:rgba(255,255,255,.9);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-cta{
+  font-family:'Cinzel',serif;font-size:.65rem;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;
+  border:1px solid var(--red);color:var(--white);
+  padding:.55rem 1.6rem;text-decoration:none;transition:background .3s,border-color .3s,box-shadow .3s;
+  box-shadow:0 0 15px rgba(192,57,43,.25);
+}
+.nav-cta:hover{
+  background:var(--red);
+  border-color:var(--red-bright);
+  box-shadow:0 0 25px rgba(192,57,43,.6);
+}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:.4rem;}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(--white);transition:.3s;}
+.mobile-menu{
+  display:none;position:fixed;inset:0;z-index:999;
+  background:rgba(4,4,4,.98);backdrop-filter:blur(20px);flex-direction:column;
+  align-items:center;justify-content:center;gap:2.5rem;
+}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{
+  font-family:'Cinzel',serif;font-size:1.1rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--white);text-decoration:none;transition:color .2s;
+}
+.mobile-menu a:hover{color:var(--gold);}
+.mobile-close{
+  position:absolute;top:2rem;right:2rem;
+  font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.2em;
+  color:var(--gray);cursor:pointer;background:none;border:none;text-transform:uppercase;
+}
+#hero{
+  min-height:100vh;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;overflow:hidden;
+  background:linear-gradient(180deg, rgba(6,6,6,0.3) 0%, rgba(6,6,6,0.95) 100%), url('assets/viking.png') no-repeat center center;
+  background-size:cover;
+}
+.hero-texture{
+  position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(192,57,43,.015) 80px,rgba(192,57,43,.015) 81px),
+    repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(192,57,43,.015) 80px,rgba(192,57,43,.015) 81px);
+  pointer-events:none;
+}
+.hero-glow{
+  position:absolute;width:800px;height:800px;border-radius:50%;
+  background:radial-gradient(circle,rgba(192,57,43,.15) 0%,transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
+}
+.hero-vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 100% 100% at 50% 50%,transparent 30%,rgba(0,0,0,.85) 100%);
+  pointer-events:none;
+}
+.hero-content{position:relative;z-index:2;padding:2rem;max-width:900px;}
+.hero-eyebrow{
+  display:flex;align-items:center;justify-content:center;gap:1.2rem;margin-bottom:2rem;
+}
+.eyebrow-line{width:50px;height:1px;background:var(--gold);opacity:.6;}
+.eyebrow-text{
+  font-family:'Cinzel',serif;font-size:.62rem;font-weight:600;
+  letter-spacing:.45em;text-transform:uppercase;color:var(--gold);
+}
+.hero-logo{
+  width:min(320px,60vw);margin-bottom:1.5rem;
+  filter:drop-shadow(0 0 40px rgba(192,57,43,.5)) brightness(1.05);
+  mix-blend-mode:screen;
+  animation:floatLogo 6s ease-in-out infinite;
+}
+@keyframes floatLogo{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.hero-title{
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(3rem,10vw,7.5rem);font-weight:900;line-height:.85;
+  color:var(--white);letter-spacing:-.02em;margin-bottom:.5rem;
+  text-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+.hero-title .outline{color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.35);}
+.hero-sub{
+  font-family:'Cinzel',serif;font-size:clamp(.9rem,2.5vw,1.3rem);
+  font-weight:400;letter-spacing:.5em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.5rem;
+  text-shadow:0 4px 10px rgba(0,0,0,0.8);
+}
+.hero-rule{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1.5rem;}
+.hero-rule-line{flex:1;max-width:120px;height:1px;background:rgba(255,255,255,.15);}
+.hero-rule-diamond{width:6px;height:6px;background:var(--red);transform:rotate(45deg);box-shadow:0 0 10px var(--red);}
+.hero-slogan{
+  font-family:'Cinzel',serif;font-size:.85rem;font-weight:400;font-style:italic;
+  letter-spacing:.2em;color:rgba(255,255,255,.5);margin-bottom:3rem;
+  text-shadow:0 2px 5px rgba(0,0,0,0.5);
+}
+.hero-datebar{
+  display:inline-flex;align-items:stretch;
+  border:1px solid rgba(201,168,76,.3);margin-bottom:3.5rem;overflow:hidden;
+  box-shadow:0 15px 35px rgba(0,0,0,0.6);
+  backdrop-filter:blur(10px);
+}
+.hd-cell{padding:.75rem 2rem;font-family:'Cinzel',serif;font-size:.7rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;}
+.hd-cell.a{background:rgba(6,6,6,0.6);color:rgba(255,255,255,.7);border-right:1px solid rgba(201,168,76,.25);}
+.hd-cell.b{background:var(--red);color:var(--white);font-size:.85rem;text-shadow:0 1px 3px rgba(0,0,0,0.4);border-right:1px solid rgba(201,168,76,.25);}
+.hd-cell.c{background:rgba(6,6,6,0.6);color:rgba(255,255,255,.7);}
+.hero-btns{display:flex;gap:1.2rem;flex-wrap:wrap;justify-content:center;}
+.btn-fill{
+  font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;
+  background:var(--red);color:var(--white);padding:.9rem 2.8rem;text-decoration:none;
+  border:1px solid var(--red);transition:background .3s,transform .2s,box-shadow .3s;display:inline-block;
+  box-shadow:0 10px 25px rgba(192,57,43,0.3);
+}
+.btn-fill:hover{background:var(--red-bright);transform:translateY(-2px);box-shadow:0 15px 30px rgba(192,57,43,0.55);}
+.btn-outline{
+  font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;
+  background:transparent;color:rgba(255,255,255,.8);padding:.9rem 2.8rem;text-decoration:none;
+  border:1px solid rgba(255,255,255,.25);transition:border-color .3s,color .3s,transform .2s,box-shadow .3s;display:inline-block;
+  backdrop-filter:blur(5px);
+}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold-light);transform:translateY(-2px);box-shadow:0 10px 25px rgba(201,168,76,0.25);}
+.hero-scroll{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;color:rgba(255,255,255,.35);
+}
+.scroll-label{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.35em;text-transform:uppercase;}
+.scroll-track{width:1px;height:50px;background:rgba(255,255,255,.1);position:relative;overflow:hidden;}
+.scroll-track::after{
+  content:'';position:absolute;top:-50%;left:0;right:0;height:50%;
+  background:linear-gradient(to bottom,transparent,var(--red));
+  animation:scrollDown 1.8s ease-in-out infinite;
+}
+@keyframes scrollDown{0%{top:-50%;}100%{top:150%;}}
+#countdown{
+  background:var(--dark2);
+  border-top:1px solid rgba(201,168,76,.12);border-bottom:1px solid rgba(201,168,76,.12);
+  padding:5rem 2rem;
+  position:relative;
+}
+.cd-wrap{max-width:800px;margin:0 auto;text-align:center;}
+.cd-title{
+  font-family:'Cinzel',serif;font-size:.65rem;font-weight:600;
+  letter-spacing:.45em;text-transform:uppercase;color:var(--gray);margin-bottom:2.5rem;
+}
+.cd-flex{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;}
+.cd-unit-block{
+  display:flex;flex-direction:column;align-items:center;min-width:105px;
+  background:rgba(18,18,18,0.75);
+  border:1px solid rgba(201,168,76,0.15);
+  padding:1.4rem 1.2rem;
+  border-radius:4px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+  transition:border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.cd-unit-block:hover{
+  border-color:rgba(201,168,76,0.45);
+  transform:translateY(-4px);
+  box-shadow:0 15px 35px rgba(201,168,76,0.15);
+}
+.cd-number{
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(2.8rem,9vw,5rem);font-weight:700;color:var(--gold-light);line-height:1;
+  text-shadow:0 0 15px rgba(201,168,76,0.25);
+}
+.cd-label{
+  font-family:'Cinzel',serif;font-size:.55rem;font-weight:600;
+  letter-spacing:.35em;text-transform:uppercase;color:var(--gray);margin-top:.8rem;
+}
+.cd-sep{
+  font-family:'Cinzel',serif;font-size:clamp(2rem,6vw,3rem);
+  color:var(--red);opacity:.5;line-height:1;margin-bottom:1.5rem;padding:0 .2rem;
+}
+.section-head{text-align:center;margin-bottom:5rem;}
+.s-eyebrow{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1.2rem;}
+.s-line{width:30px;height:1px;background:var(--red);}
+.s-tag{font-family:'Cinzel',serif;font-size:.58rem;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:var(--red);}
+.s-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.2rem);font-weight:700;color:var(--white);line-height:1.05;}
+.s-title em{color:var(--gold);font-style:normal;}
+.s-rule{display:flex;align-items:center;justify-content:center;gap:.8rem;margin-top:1.8rem;}
+.s-rule-line{width:60px;height:1px;background:rgba(192,57,43,.3);}
+.s-rule-dot{width:4px;height:4px;background:var(--red);transform:rotate(45deg);}
+#evento{padding:8rem 5vw;background:var(--dark);}
+.evento-layout{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+.info-stack{display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,.04);}
+.info-row{
+  display:flex;align-items:flex-start;gap:2rem;padding:1.8rem 2rem;background:var(--dark);
+  border-left:2px solid transparent;transition:border-color .2s,background .2s;
+}
+.info-row:hover{border-left-color:var(--red);background:var(--dark3);}
+.ir-icon{
+  flex-shrink:0;width:38px;height:38px;border:1px solid rgba(192,57,43,.3);
+  display:flex;align-items:center;justify-content:center;
+}
+.ir-icon svg{width:18px;height:18px;stroke:var(--red);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.ir-label{font-family:'Cinzel',serif;font-size:.57rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;}
+.ir-value{font-size:1.05rem;font-weight:600;color:var(--white);line-height:1.4;}
+.ir-sub{font-size:.88rem;color:var(--gray);margin-top:.2rem;line-height:1.5;}
+.schedule-panel{
+  background:rgba(15,15,15,0.7);
+  border:1px solid rgba(255,255,255,.05);padding:2.5rem;
+  backdrop-filter:blur(10px);
+}
+.sp-head{
+  font-family:'Cinzel',serif;font-size:.6rem;font-weight:700;
+  letter-spacing:.4em;text-transform:uppercase;color:var(--gold);
+  padding-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:2rem;
+}
+.sch-item{
+  display:flex;gap:1.5rem;align-items:flex-start;
+  padding-bottom:2rem;margin-bottom:2rem;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.sch-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.sch-dot{width:10px;height:10px;background:var(--red);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);flex-shrink:0;margin-top:4px;box-shadow:0 0 8px var(--red);}
+.sch-hora{font-family:'Cinzel',serif;font-size:.68rem;font-weight:700;color:var(--red);letter-spacing:.1em;margin-bottom:.3rem;}
+.sch-desc{font-size:1rem;font-weight:600;color:var(--white);}
+.sch-sub{font-size:.85rem;color:var(--gray);margin-top:.3rem;line-height:1.5;}
+#categorias{padding:8rem 5vw;background:var(--dark2);position:relative;}
+#categorias::before,#categorias::after{
+  content:'';position:absolute;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(201,168,76,.2),transparent);
+}
+#categorias::before{top:0;}#categorias::after{bottom:0;}
+.cats-wrap{max-width:1200px;margin:0 auto;}
+.cats-gender-label{
+  font-family:'Cinzel',serif;font-size:.6rem;font-weight:700;
+  letter-spacing:.4em;text-transform:uppercase;color:var(--gray);
+  display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;
+}
+.cats-gender-label::after{flex:1;height:1px;content:'';background:rgba(255,255,255,.05);}
+.cats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:rgba(255,255,255,.04);}
+.cat-tile{
+  background:rgba(11,11,11,0.65);padding:2.2rem 1.5rem;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  transition:background .3s, transform .3s, border-color .3s;
+  position:relative;overflow:hidden;cursor:pointer;
+  border:1px solid transparent;
+  backdrop-filter:blur(5px);
+}
+.cat-tile::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1.5px;background:var(--red);
+  transform:scaleX(0);transform-origin:center;transition:transform .3s;
+}
+.cat-tile:hover{
+  background:var(--dark3);
+  transform:translateY(-4px);
+  border-color:rgba(192,57,43,.2);
+}
+.cat-tile:hover::after{transform:scaleX(1);}
+.cat-svg{width:40px;height:40px;margin-bottom:1.2rem;stroke:rgba(255,255,255,.25);fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s;}
+.cat-tile:hover class{stroke:var(--red);}
+.cat-tile:hover .cat-svg{stroke:var(--red);filter:drop-shadow(0 0 5px rgba(192,57,43,0.5));}
+.cat-name{font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--white);line-height:1.3;}
+.cat-badge{margin-top:.7rem;padding:.2rem .9rem;font-family:'Cinzel',serif;font-size:.5rem;font-weight:600;letter-spacing:.25em;text-transform:uppercase;border:1px solid;}
+.cat-badge.m{border-color:rgba(192,57,43,.35);color:rgba(192,57,43,.7);}
+.cat-badge.f{border-color:rgba(201,168,76,.25);color:rgba(201,168,76,.6);}
+#inscripcion{padding:8rem 5vw;background:var(--dark);}
+.ins-layout{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.1fr 1fr;gap:5rem;align-items:center;}
+.ins-left p{font-size:1.05rem;font-weight:400;color:rgba(255,255,255,.55);line-height:1.9;margin-bottom:2.5rem;}
+.price-card{
+  border:1px solid rgba(201,168,76,.25);padding:1.5rem;margin-bottom:2.5rem;display:flex;align-items:center;gap:1.5rem;
+  background:rgba(15,15,15,0.7);
+  backdrop-filter:blur(8px);
+}
+.price-num{font-family:'Cinzel Decorative',serif;font-size:2.2rem;color:var(--gold-light);line-height:1;flex-shrink:0;text-shadow:0 0 10px rgba(201,168,76,0.3);}
+.price-info-label{font-family:'Cinzel',serif;font-size:.6rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem;}
+.price-info-desc{font-size:.88rem;color:var(--gray);line-height:1.5;}
+.btn-inscribir{
+  font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;
+  background:var(--red);color:var(--white);padding:1.1rem 3rem;text-decoration:none;
+  display:inline-flex;align-items:center;gap:.8rem;border:1px solid var(--red);transition:background .2s,transform .2s,box-shadow .3s;
+  box-shadow:0 10px 25px rgba(192,57,43,0.3);
+}
+.btn-inscribir:hover{background:var(--red-bright);transform:translateY(-2px);box-shadow:0 15px 30px rgba(192,57,43,0.55);}
+.btn-inscribir svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.ins-right{
+  border:1px solid rgba(255,255,255,.05);padding:3rem;
+  background:rgba(15,15,15,0.7);
+  display:flex;flex-direction:column;align-items:center;gap:1.5rem;text-align:center;
+  backdrop-filter:blur(8px);
+}
+.ins-right-label{font-family:'Cinzel',serif;font-size:.6rem;font-weight:600;letter-spacing:.35em;text-transform:uppercase;color:var(--gray);}
+.qr-frame{
+  border:1px solid rgba(201,168,76,.2);padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem;
+  background:rgba(6,6,6,0.4);
+}
+.qr-link{font-family:'Cinzel',serif;font-size:.6rem;color:var(--gold);text-decoration:none;letter-spacing:.08em;border-bottom:1px solid rgba(201,168,76,.3);padding-bottom:.2rem;transition:color 0.2s;}
+.qr-link:hover{color:var(--white);border-bottom-color:var(--white);}
+.ins-open-badge{
+  background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.25);padding:.4rem 1.5rem;
+  font-family:'Cinzel',serif;font-size:.58rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--red);
+  display:inline-flex;align-items:center;gap:.6rem;
+}
+.open-dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.5s ease-in-out infinite;box-shadow:0 0 8px var(--red);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+#galeria{padding:8rem 5vw;background:var(--dark2);}
+/* ===== GALLERY ===== */
+.gal-wrap{max-width:1280px;margin:0 auto;}
+.gal-tabs{display:flex;justify-content:center;gap:.6rem;margin-bottom:3rem;flex-wrap:wrap;}
+.gal-tab{
+  font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;padding:.55rem 1.8rem;border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.45);background:transparent;cursor:pointer;
+  transition:all .3s ease;border-radius:2px;
+}
+.gal-tab:hover{border-color:rgba(201,168,76,.4);color:rgba(255,255,255,.7);}
+.gal-tab.active{
+  border-color:var(--gold);color:var(--gold-light);
+  background:rgba(201,168,76,.08);box-shadow:0 0 18px rgba(201,168,76,.15);
+}
+.gal-grid{
+  columns:4 220px;column-gap:8px;
+  transition:opacity .3s;
+}
+.gal-item{
+  break-inside:avoid;margin-bottom:8px;
+  position:relative;overflow:hidden;cursor:pointer;
+  border:1px solid rgba(255,255,255,.04);
+  border-radius:4px;background:var(--dark3);
+  transition:transform .35s,box-shadow .35s;
+}
+.gal-item:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 0 1px rgba(201,168,76,.25);}
+.gal-item img{
+  width:100%;display:block;object-fit:cover;
+  filter:grayscale(20%) contrast(1.05);
+  transition:transform .55s,filter .55s;
+}
+.gal-item:hover img{transform:scale(1.06);filter:grayscale(0%) contrast(1.1) brightness(1.05);}
+.gal-item-cap{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:2.2rem 1rem .7rem;
+  background:linear-gradient(transparent,rgba(0,0,0,.88));
+  opacity:0;transition:opacity .3s;
+}
+.gal-item:hover .gal-item-cap{opacity:1;}
+.gal-item-cap span{
+  font-family:'Cinzel',serif;font-size:.52rem;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--gold);
+}
+.gal-zoom-icon{
+  position:absolute;top:.7rem;right:.7rem;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .3s;
+}
+.gal-item:hover .gal-zoom-icon{opacity:1;}
+.gal-zoom-icon svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;}
+/* Video items */
+.gal-vid-item{
+  break-inside:avoid;margin-bottom:8px;
+  position:relative;border:1px solid rgba(185,28,28,.25);
+  border-radius:4px;background:#000;overflow:hidden;
+  display:none;
+}
+.gal-vid-item.show{display:block;}
+.gal-vid-item video{width:100%;display:block;max-height:340px;object-fit:contain;background:#000;}
+.gal-vid-badge{
+  position:absolute;top:.7rem;left:.7rem;
+  font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;
+  background:var(--red);color:#fff;padding:.2rem .6rem;
+  border-radius:2px;pointer-events:none;
+}
+/* Lightbox */
+#gal-lightbox{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.96);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+#gal-lightbox.open{opacity:1;pointer-events:all;}
+.lb-img-wrap{
+  max-width:92vw;max-height:90vh;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+#lb-img{max-width:100%;max-height:90vh;object-fit:contain;border-radius:6px;box-shadow:0 0 80px rgba(0,0,0,.8);display:block;}
+.lb-close{
+  position:fixed;top:1.5rem;right:1.8rem;
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  color:#fff;font-size:1.4rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s;z-index:10001;
+}
+.lb-close:hover{background:rgba(185,28,28,.7);}
+.lb-arrow{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:48px;height:48px;border-radius:50%;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  color:#fff;font-size:1.5rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .25s,border-color .25s;z-index:10001;
+}
+.lb-arrow:hover{background:rgba(201,168,76,.2);border-color:rgba(201,168,76,.5);}
+#lb-prev{left:1.2rem;}
+#lb-next{right:1.2rem;}
+.lb-counter{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:700;
+  letter-spacing:.18em;color:rgba(255,255,255,.45);
+}
+/* Footer gallery */
+.gal-footer{display:flex;align-items:center;justify-content:space-between;margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.05);flex-wrap:wrap;gap:1.5rem;}
+.gal-footer-text{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gray);}
+.btn-ig{
+  font-family:'Cinzel',serif;font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);
+  padding:.7rem 1.8rem;text-decoration:none;display:inline-flex;align-items:center;gap:.7rem;transition:border-color .3s,color .3s,box-shadow .3s;
+}
+.btn-ig svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.btn-ig:hover{border-color:var(--gold);color:var(--gold-light);box-shadow:0 0 15px rgba(201,168,76,0.2);}
+#sobre{padding:8rem 5vw;background:var(--dark);}
+.sobre-layout{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;}
+.sobre-ghost{font-family:'Cinzel Decorative',serif;font-size:min(13rem,18vw);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(192,57,43,.07);line-height:1;margin-bottom:-2rem;user-select:none;}
+.sobre-kicker{font-family:'Cinzel',serif;font-size:.6rem;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:var(--red);margin-bottom:1rem;}
+.sobre-h{font-family:'Cinzel Decorative',serif;font-size:clamp(1.6rem,3.5vw,2.8rem);color:var(--white);line-height:1.1;margin-bottom:1.8rem;}
+.sobre-p{font-size:1rem;font-weight:400;color:rgba(255,255,255,.5);line-height:1.95;margin-bottom:1rem;}
+.sobre-divider{width:40px;height:1px;background:var(--red);margin:2rem 0;}
+.org-lbl{font-family:'Cinzel',serif;font-size:.55rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gray);}
+.org-val{font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:var(--gold);}
+.sobre-stats{display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,.04);}
+.stat-block{background:var(--dark);padding:2rem 2.5rem;border-left:2px solid transparent;transition:border-color .2s,background .2s;}
+.stat-block:hover{border-left-color:var(--red);background:var(--dark3);}
+.stat-num{font-family:'Cinzel Decorative',serif;font-size:3.5rem;line-height:1;}
+.stat-num.red{color:var(--red);text-shadow:0 0 10px rgba(192,57,43,0.3);}
+.stat-num.gold{color:var(--gold);text-shadow:0 0 10px rgba(201,168,76,0.3);}
+.stat-lbl{font-family:'Cinzel',serif;font-size:.6rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gray);margin-top:.4rem;}
+.stat-sub{font-size:.9rem;color:rgba(255,255,255,.4);margin-top:.3rem;}
+#contacto{padding:8rem 5vw;background:var(--dark2);position:relative;}
+#contacto::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(201,168,76,.2),transparent);}
+.contacto-wrap{max-width:1000px;margin:0 auto;}
+.social-row{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.04);margin-bottom:1px;}
+.soc-card{
+  background:rgba(15,15,15,0.6);padding:2.5rem 2rem;
+  display:flex;align-items:center;gap:1.8rem;text-decoration:none;
+  transition:background .2s;position:relative;overflow:hidden;
+  backdrop-filter:blur(5px);
+}
+.soc-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:2px;background:var(--red);transform:scaleY(0);transform-origin:bottom;transition:transform .3s;}
+.soc-card:hover{background:var(--dark3);}
+.soc-card:hover::after{transform:scaleY(1);}
+.soc-icon{width:44px;height:44px;flex-shrink:0;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;}
+.soc-icon svg{width:20px;height:20px;stroke:rgba(255,255,255,.4);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:stroke 0.2s;}
+.soc-card:hover .soc-icon svg{stroke:var(--red);filter:drop-shadow(0 0 4px var(--red));}
+.soc-plat{font-family:'Cinzel',serif;font-size:.58rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gray);margin-bottom:.3rem;}
+.soc-handle{font-size:1rem;font-weight:600;color:var(--white);}
+.wa-bar{
+  background:rgba(15,15,15,0.6);border:1px solid rgba(255,255,255,.04);
+  padding:2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:2rem;margin-top:1px;
+  backdrop-filter:blur(5px);
+}
+.wa-lbl{font-family:'Cinzel',serif;font-size:.58rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;}
+.wa-num{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--white);}
+.btn-wa{
+  font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  background:rgba(37,211,102,.08);color:#25D366;padding:.9rem 2.2rem;text-decoration:none;
+  border:1px solid rgba(37,211,102,.25);display:inline-flex;align-items:center;gap:.8rem;transition:background .2s,box-shadow .3s;
+}
+.btn-wa:hover{background:rgba(37,211,102,.16);box-shadow:0 0 15px rgba(37,211,102,0.25);}
+.btn-wa svg{width:18px;height:18px;fill:#25D366;flex-shrink:0;}
+footer{background:var(--dark);border-top:1px solid rgba(255,255,255,.04);padding:5rem 5vw 3rem;}
+.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4rem;margin-bottom:4rem;}
+.footer-logo{display:flex;align-items:center;text-decoration:none;margin-bottom:1rem;}
+.footer-logo img{height:64px;width:auto;opacity:.8;filter:grayscale(10%);mix-blend-mode:screen;}
+.footer-tagline{font-family:'Cinzel',serif;font-size:.6rem;font-weight:600;letter-spacing:.35em;text-transform:uppercase;color:var(--gray);font-style:italic;}
+.footer-col-title{font-family:'Cinzel',serif;font-size:.62rem;font-weight:700;letter-spacing:.35em;text-transform:uppercase;color:var(--gray);margin-bottom:1.5rem;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:.8rem;}
+.footer-links a{font-size:.9rem;color:rgba(255,255,255,.35);text-decoration:none;font-family:'Cinzel',serif;letter-spacing:.05em;transition:color .2s;}
+.footer-links a:hover{color:var(--gold-light);}
+.footer-contact{display:flex;flex-direction:column;gap:.8rem;}
+.fc-row{font-size:.88rem;color:rgba(255,255,255,.35);}
+.fc-row a{color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s;}
+.fc-row a:hover{color:var(--gold-light);}
+.footer-bottom{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding-top:2rem;border-top:1px solid rgba(255,255,255,.04);flex-wrap:wrap;gap:1rem;}
+.footer-copy{font-size:.8rem;color:rgba(255,255,255,.15);font-family:'Cinzel',serif;letter-spacing:.05em;}
+.footer-made{font-size:.72rem;color:rgba(255,255,255,.1);font-family:'Cinzel',serif;letter-spacing:.1em;text-transform:uppercase;}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease;}
+.reveal.up{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:.12s;}
+.reveal-delay-2{transition-delay:.24s;}
+
+/* Custom Timeline Style */
+.sch-items-wrap {
+  position: relative;
+}
+.sch-items-wrap::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 4px;
+  width: 2px;
+  background: linear-gradient(to bottom, rgba(192, 57, 43, 0.1), var(--red) 20%, var(--red) 80%, rgba(192, 57, 43, 0.1));
+  opacity: 0.5;
+}
+
+/* Custom SVG Category Icons */
+.cat-svg {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 1.2rem;
+  stroke: url(#gold-grad);
+  fill: none;
+  stroke-width: 1.2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s, transform 0.3s, filter 0.3s;
+}
+.cat-tile:hover .cat-svg {
+  stroke: url(#red-grad);
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 8px rgba(231, 76, 60, 0.6));
+}
+
+/* Viking Ticket Pass Layout */
+.viking-ticket {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  background: linear-gradient(135deg, rgba(20, 20, 20, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%) !important;
+  border: 1px solid rgba(201, 168, 76, 0.25) !important;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  margin-top: 2rem;
+}
+.viking-ticket::before, .viking-ticket::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: var(--dark);
+  border-radius: 50%;
+  left: calc(43.5% - 12px);
+  z-index: 5;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+}
+.viking-ticket::before { top: -12px; }
+.viking-ticket::after { bottom: -12px; }
+
+.ins-left-ticket {
+  padding: 2.2rem;
+  border-right: 2px dashed rgba(201, 168, 76, 0.2);
+  position: relative;
+}
+.ins-right-ticket {
+  padding: 2.2rem;
+  background: rgba(6, 6, 6, 0.4);
+  position: relative;
+}
+
+/* Barcode decoration */
+.barcode {
+  display: flex;
+  gap: 2px;
+  height: 35px;
+  margin-top: 1rem;
+  opacity: 0.35;
+  transition: opacity 0.3s;
+}
+.viking-ticket:hover .barcode {
+  opacity: 0.6;
+}
+.barcode span {
+  width: 2px;
+  height: 100%;
+  background: var(--white);
+  display: block;
+}
+.barcode span:nth-child(even) { width: 3px; }
+.barcode span:nth-child(3n) { width: 1px; }
+.barcode span:nth-child(5n) { width: 4px; }
+
+@media(max-width:1000px){
+  .footer-inner{grid-template-columns:1fr 1fr;gap:3rem;}
+  .sobre-layout,.ins-layout,.evento-layout{grid-template-columns:1fr;}
+  .sobre-ghost{font-size:7rem;}
+  
+  .viking-ticket {
+    grid-template-columns: 1fr;
+  }
+  .viking-ticket::before, .viking-ticket::after {
+    display: none;
+  }
+  .ins-left-ticket {
+    border-right: none;
+    border-bottom: 2px dashed rgba(201, 168, 76, 0.2);
+    padding: 2.5rem 1.5rem;
+  }
+  .ins-right-ticket {
+    padding: 2.5rem 1.5rem;
+  }
+}
+@media(max-width:768px){
+  .nav-links,.nav-cta{display:none;}
+  .hamburger{display:flex;}
+  .social-row{grid-template-columns:1fr;}
+  .gallery-mosaic{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
+  .gal-cell:nth-child(1){grid-column:1/3;grid-row:auto;}
+  .gal-cell:nth-child(n){grid-column:auto;}
+  .gallery-mosaic .gal-cell{height:180px;}
+  .footer-inner{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  .hero-datebar{flex-direction:column;}
+  .hd-cell.a,.hd-cell.c{border:none;border-top:1px solid rgba(201,168,76,.15);}
+  .hd-cell.b{border:none;border-top:1px solid rgba(201,168,76,.15);border-bottom:1px solid rgba(201,168,76,.15);}
+  .cd-sep{display:none;}
+  .cd-flex{gap:0.5rem;}
+  .cd-unit-block{min-width:80px;padding:1rem 0.6rem;}
+}
+
+/* Modal de Categorías */
+.cat-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: rgba(4, 4, 4, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.cat-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.cat-modal-card {
+  position: relative;
+  background: linear-gradient(135deg, #0b0b0b 0%, #121212 100%);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 620px;
+  padding: 2.5rem;
+  transform: scale(0.92);
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  overflow-y: auto;
+  max-height: 90vh;
+}
+.cat-modal.open .cat-modal-card {
+  transform: scale(1);
+}
+.cat-modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  color: var(--gray);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  line-height: 1;
+}
+.cat-modal-close:hover {
+  color: var(--red);
+}
+.cat-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 1rem;
+}
+.cat-modal-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--white);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+.cat-modal-badge {
+  padding: 0.2rem 0.8rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 2px;
+}
+.cat-modal-badge.m {
+  border-color: rgba(192, 57, 43, 0.4);
+  color: var(--red-bright);
+  background: rgba(192, 57, 43, 0.05);
+}
+.cat-modal-badge.f {
+  border-color: rgba(201, 168, 76, 0.3);
+  color: var(--gold-light);
+  background: rgba(201, 168, 76, 0.05);
+}
+.cat-modal-desc {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.cat-modal-image-wrap {
+  width: 100%;
+  margin-bottom: 1.8rem;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+}
+.cat-modal-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.cat-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+.cat-modal-section {
+  background: rgba(6, 6, 6, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 1.5rem;
+  border-radius: 4px;
+}
+.cat-modal-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.cat-modal-section-title svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--gold);
+  fill: none;
+  stroke-width: 1.8px;
+}
+.cat-modal-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.cat-modal-list li {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  line-height: 1.4;
+}
+.cat-modal-list li::before {
+  content: "—";
+  color: var(--red);
+  font-weight: bold;
+}
+.cat-modal-suit-type {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+.cat-modal-suit-rules {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+}
+.cat-modal-text {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+.cat-modal-footer {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: 1.5rem;
+}
+.cat-modal-logo {
+  height: 40px;
+  opacity: 0.35;
+  mix-blend-mode: screen;
+}
+
+/* Modal clases weight/height styling */
+.cat-modal-classes {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.cat-modal-class-group {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding-bottom: 0.8rem;
+}
+.cat-modal-class-group:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.cat-modal-class-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.cat-modal-class-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.cat-modal-class-table td {
+  padding: 0.35rem 0;
+  color: rgba(255, 255, 255, 0.75);
+}
+.cat-modal-class-table td:last-child {
+  text-align: right;
+  color: var(--white);
+  font-weight: 600;
+}
+.cat-modal-class-table tr {
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.03);
+}
+.cat-modal-class-table tr:last-child {
+  border-bottom: none;
+}
+
+/* Reglamento Section styling */
+#reglamento {
+  padding: 8rem 5vw;
+  background: var(--dark3);
+  position: relative;
+}
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.rule-card {
+  background: rgba(11, 11, 11, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 2.2rem;
+  border-radius: 6px;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(5px);
+}
+.rule-card:hover {
+  border-color: rgba(201, 168, 76, 0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+.rule-icon {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 1.2rem;
+  stroke: var(--gold);
+  fill: none;
+  stroke-width: 1.5px;
+}
+.rule-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.5rem;
+}
+.rule-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+  margin-bottom: 1.8rem;
+}
+.rule-list li {
+  position: relative;
+  padding-left: 1.2rem;
+}
+.rule-list li::before {
+  content: "★";
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 0.75rem;
+  top: 2px;
+}
+.btn-afiche {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  padding: 0.6rem 1.2rem;
+  text-align: center;
+  margin-top: auto;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+  cursor: pointer;
+}
+.btn-afiche:hover {
+  background: var(--gold);
+  color: var(--dark);
+  border-color: var(--gold);
+}
+
+/* ===== VIDEO PROMO SECTION ===== */
+#video-promo {
+  padding: 7rem 2rem;
+  background: var(--dark);
+  position: relative;
+  overflow: hidden;
+}
+#video-promo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(185,28,28,0.10) 0%, transparent 65%),
+              radial-gradient(ellipse at 50% 100%, rgba(201,168,76,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+.vp-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+.vp-head {
+  text-align: center;
+}
+.vp-kicker {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 0.8rem;
+}
+.vp-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  color: var(--gold-light);
+  margin: 0;
+  line-height: 1.15;
+}
+.vp-title em {
+  font-style: normal;
+  color: #fff;
+}
+.vp-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  justify-content: center;
+}
+.vp-rule-line {
+  height: 1px;
+  width: 60px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+.vp-rule-line:last-child {
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.vp-rule-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.vp-frame {
+  width: 100%;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(201,168,76,0.25),
+    0 0 60px rgba(185,28,28,0.20),
+    0 30px 80px rgba(0,0,0,0.6);
+  background: #0a0a0a;
+}
+.vp-frame::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(201,168,76,0.5), rgba(185,28,28,0.3), transparent 50%);
+  z-index: 1;
+  pointer-events: none;
+}
+.vp-frame video {
+  width: 100%;
+  display: block;
+  border-radius: 14px;
+  outline: none;
+  max-height: 580px;
+  object-fit: contain;
+  background: #000;
+}
+.vp-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 70%, transparent 100%);
+  cursor: pointer;
+  z-index: 5;
+  transition: opacity 0.35s ease;
+  border-radius: 14px;
+}
+.vp-play-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.vp-play-btn {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: rgba(185,28,28,0.85);
+  border: 2px solid rgba(201,168,76,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 0 0 rgba(185,28,28,0.5);
+  animation: vpPulse 2.4s ease-in-out infinite;
+}
+.vp-play-btn:hover {
+  transform: scale(1.12);
+  background: var(--red);
+  box-shadow: 0 0 40px rgba(185,28,28,0.6);
+}
+.vp-play-btn svg {
+  width: 34px;
+  height: 34px;
+  fill: #fff;
+  margin-left: 5px;
+}
+.vp-play-label {
+  margin-top: 1rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+}
+@keyframes vpPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(185,28,28,0.5); }
+  50% { box-shadow: 0 0 0 18px rgba(185,28,28,0); }
+}
+@media (max-width: 600px) {
+  .vp-play-btn { width: 64px; height: 64px; }
+  .vp-play-btn svg { width: 26px; height: 26px; }
+}
+
+/* ===== MÉTODOS DE PAGO ===== */
+.payment-methods {
+  margin-top: 1.8rem;
+  margin-bottom: 2.2rem;
+}
+.pm-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.pm-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0.25), transparent);
+}
+.pm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.pm-card {
+  position: relative;
+  background: rgba(11, 11, 11, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 1.2rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 270px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+.pm-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  opacity: 0.85;
+}
+.pm-card.bancolombia::before {
+  background: linear-gradient(90deg, #FDDA24 0%, #002F6C 50%, #E4002B 100%);
+}
+.pm-card.bancolombia:hover {
+  border-color: rgba(253, 218, 36, 0.3);
+  box-shadow: 0 12px 30px rgba(253, 218, 36, 0.08), 0 0 15px rgba(253, 218, 36, 0.05);
+  transform: translateY(-3px);
+}
+.pm-card.nequi::before {
+  background: linear-gradient(90deg, #E4007F 0%, #3a1c5d 100%);
+}
+.pm-card.nequi:hover {
+  border-color: rgba(228, 0, 127, 0.3);
+  box-shadow: 0 12px 30px rgba(228, 0, 127, 0.08), 0 0 15px rgba(228, 0, 127, 0.05);
+  transform: translateY(-3px);
+}
+.pm-card.daviplata::before {
+  background: #E21A22;
+}
+.pm-card.daviplata:hover {
+  border-color: rgba(226, 26, 34, 0.3);
+  box-shadow: 0 12px 30px rgba(226, 26, 34, 0.08), 0 0 15px rgba(226, 26, 34, 0.05);
+  transform: translateY(-3px);
+}
+.pm-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.pm-qr-img {
+  width: 130px;
+  height: 130px;
+  margin: 0.6rem auto;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #ffffff;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+.pm-card:hover .pm-qr-img {
+  transform: scale(1.03);
+}
+.pm-qr-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.pm-qr-img.pm-qr-pending {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+}
+.pm-qr-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.pm-qr-placeholder svg {
+  width: 32px;
+  height: 32px;
+  stroke: rgba(255, 255, 255, 0.25);
+  stroke-width: 1.5;
+}
+.brand-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.pm-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.4rem;
+}
+.pm-type, .pm-holder {
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  font-weight: 600;
+  color: var(--gray);
+  margin-bottom: 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.pm-num {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 0.08em;
+  transition: color 0.2s;
+  line-height: 1.1;
+}
+.pm-card:hover .pm-num {
+  color: var(--white);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+.pm-copy-tooltip {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--gray);
+  opacity: 0;
+  transition: opacity 0.3s, color 0.2s;
+  pointer-events: none;
+  letter-spacing: 0.05em;
+}
+.pm-card:hover .pm-copy-tooltip {
+  opacity: 0.75;
+}
+@media (max-width: 768px) {
+  .pm-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Global SVG Gradients Definition -->
+<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0C040" />
+      <stop offset="100%" stop-color="#C9A84C" />
+    </linearGradient>
+    <linearGradient id="red-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E74C3C" />
+      <stop offset="100%" stop-color="#C0392B" />
+    </linearGradient>
+  </defs>
+</svg>
+
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    <img src="assets/logo.png" alt="Vikingos Classic"/>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#evento">Evento</a></li>
+    <li><a href="#categorias">Categorias</a></li>
+    <li><a href="#video-promo">Video</a></li>
+    <li><a href="#galeria">Galeria</a></li>
+    <li><a href="#sobre">Nosotros</a></li>
+    <li><a href="#inscripcion">Inscripcion</a></li>
+    <li><a href="#reglamento">Reglamento</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="https://forms.gle/aFEUgWzPXxUtX6jh8" target="_blank" class="nav-cta">Inscribete</a>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMenu()">Cerrar</button>
+  <a href="#evento" onclick="toggleMenu()">Evento</a>
+  <a href="#categorias" onclick="toggleMenu()">Categorias</a>
+  <a href="#video-promo" onclick="toggleMenu()">Video</a>
+  <a href="#galeria" onclick="toggleMenu()">Galeria</a>
+  <a href="#sobre" onclick="toggleMenu()">Nosotros</a>
+  <a href="#inscripcion" onclick="toggleMenu()">Inscripcion</a>
+  <a href="#reglamento" onclick="toggleMenu()">Reglamento</a>
+  <a href="#contacto" onclick="toggleMenu()">Contacto</a>
+  <a href="https://forms.gle/aFEUgWzPXxUtX6jh8" target="_blank" style="color:var(--red);" onclick="toggleMenu()">Inscribete</a>
+</div>
+
+<section id="hero">
+  <div class="hero-texture"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Quinta Edicion &middot; 2026</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <h1 class="hero-title">
+      <span class="outline">VIKINGOS</span><br/>CLASSIC
+    </h1>
+    <p class="hero-sub">Fisicoculturismo &amp; Fitness</p>
+    <div class="hero-rule">
+      <div class="hero-rule-line"></div>
+      <div class="hero-rule-diamond"></div>
+      <div class="hero-rule-line"></div>
+    </div>
+    <p class="hero-slogan">"Al mejor estilo vikingo"</p>
+    <div class="hero-datebar">
+      <div class="hd-cell a">7 de Junio</div>
+      <div class="hd-cell b">2026</div>
+      <div class="hd-cell c">Cajica, Cundinamarca</div>
+    </div>
+    <div class="hero-btns">
+      <a href="https://forms.gle/aFEUgWzPXxUtX6jh8" target="_blank" class="btn-fill">Inscribete ahora</a>
+      <a href="#evento" class="btn-outline">Ver detalles</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-track"></div>
+  </div>
+</section>
+
+<section id="countdown">
+  <div class="cd-wrap">
+    <div class="cd-title">Tiempo restante para el evento</div>
+    <div class="cd-flex">
+      <div class="cd-unit-block"><div class="cd-number" id="cd-d">00</div><div class="cd-label">Dias</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit-block"><div class="cd-number" id="cd-h">00</div><div class="cd-label">Horas</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit-block"><div class="cd-number" id="cd-m">00</div><div class="cd-label">Minutos</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit-block"><div class="cd-number" id="cd-s">00</div><div class="cd-label">Segundos</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="evento">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-head reveal">
+      <div class="s-eyebrow"><div class="s-line"></div><span class="s-tag">Informacion general</span><div class="s-line"></div></div>
+      <h2 class="s-title">El <em>Evento</em></h2>
+      <div class="s-rule"><div class="s-rule-line"></div><div class="s-rule-dot"></div><div class="s-rule-line"></div></div>
+    </div>
+    <div class="evento-layout">
+      <div class="info-stack reveal">
+        <div class="info-row">
+          <div class="ir-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div>
+            <div class="ir-label">Fecha</div>
+            <div class="ir-value">7 de Junio, 2026</div>
+            <div class="ir-sub">Domingo</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="ir-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="ir-label">Lugar</div>
+            <div class="ir-value">Centro Cultural y de Convenciones</div>
+            <div class="ir-sub">Calle 1 #3e-60, Barrio La Estacion &middot; Cajica, Cundinamarca</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="ir-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="ir-label">Inicio del espectaculo</div>
+            <div class="ir-value">12:00 PM</div>
+            <div class="ir-sub">Registro y pesaje: 8:00 AM &mdash; 10:00 AM</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="ir-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+          </div>
+          <div>
+            <div class="ir-label">Entrada acompanantes</div>
+            <div class="ir-value">$50.000 COP</div>
+            <div class="ir-sub">Disponible en taquilla el dia del evento</div>
+          </div>
+        </div>
+      </div>
+      <div class="schedule-panel reveal reveal-delay-1">
+        <div class="sp-head">Cronograma del dia</div>
+        <div class="sch-items-wrap">
+          <div class="sch-item">
+            <div class="sch-dot"></div>
+            <div>
+              <div class="sch-hora">8:00 AM &mdash; 10:00 AM</div>
+              <div class="sch-desc">Inscripciones, Registro y Pesaje</div>
+              <div class="sch-sub">Presentacion obligatoria de todos los atletas</div>
+            </div>
+          </div>
+          <div class="sch-item">
+            <div class="sch-dot"></div>
+            <div>
+              <div class="sch-hora">12:00 PM</div>
+              <div class="sch-desc">Primera Salida</div>
+              <div class="sch-sub">Presentacion individual de cada atleta</div>
+            </div>
+          </div>
+          <div class="sch-item">
+            <div class="sch-dot"></div>
+            <div>
+              <div class="sch-hora">Segunda Salida</div>
+              <div class="sch-desc">Cuartos de Giro</div>
+              <div class="sch-sub">Poses reglamentarias y comparativas segun categoria</div>
+            </div>
+          </div>
+          <div class="sch-item">
+            <div class="sch-dot"></div>
+            <div>
+              <div class="sch-hora">Tercera Salida</div>
+              <div class="sch-desc">Coreografia</div>
+              <div class="sch-sub">Solo para las categorias que aplique</div>
+            </div>
+          </div>
+          <div class="sch-item">
+            <div class="sch-dot"></div>
+            <div>
+              <div class="sch-hora">Cuarta Salida</div>
+              <div class="sch-desc">Premiacion</div>
+              <div class="sch-sub">Los guerreros seran coronados en el escenario</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="categorias">
+  <div class="cats-wrap">
+    <div class="section-head reveal">
+      <div class="s-eyebrow"><div class="s-line"></div><span class="s-tag">Competencia</span><div class="s-line"></div></div>
+      <h2 class="s-title"><em>Categorias</em></h2>
+      <div class="s-rule"><div class="s-rule-line"></div><div class="s-rule-dot"></div><div class="s-rule-line"></div></div>
+      <p style="font-family:'Rajdhani',sans-serif; font-size:1.05rem; color:rgba(255,255,255,0.5); max-width:600px; margin:1.5rem auto 0; line-height:1.6; text-align:center;">
+        Haz clic en cualquier categoría para consultar sus detalles, poses reglamentarias y especificaciones de vestimenta oficial.
+      </p>
+    </div>
+    <div class="cats-gender-label reveal">Hombres</div>
+    <div class="cats-grid reveal">
+      <div class="cat-tile" onclick="openCategoryModal('bodybuilding')">
+        <svg class="cat-svg" viewBox="0 0 40 40"><rect x="8" y="8" width="24" height="24" rx="1"/><line x1="14" y1="8" x2="14" y2="32"/><line x1="26" y1="8" x2="26" y2="32"/><line x1="8" y1="20" x2="32" y2="20"/></svg>
+        <div class="cat-name">Bodybuilding</div>
+        <div class="cat-badge m">Masculino</div>
+      </div>
+      <div class="cat-tile" onclick="openCategoryModal('classic_physique')">
+        <svg class="cat-svg" viewBox="0 0 40 40"><ellipse cx="20" cy="14" rx="7" ry="9"/><path d="M8 36c0-7 5-12 12-12s12 5 12 12"/></svg>
+        <div class="cat-name">Classic Physique</div>
+        <div class="cat-badge m">Masculino</div>
+      </div>
+      <div class="cat-tile" onclick="openCategoryModal('mens_physique')">
+        <svg class="cat-svg" viewBox="0 0 40 40"><circle cx="20" cy="11" r="6"/><path d="M10 36v-8a10 10 0 0 1 20 0v8"/></svg>
+        <div class="cat-name">Men's Physique</div>
+        <div class="cat-badge m">Masculino</div>
+      </div>
+      <div class="cat-tile" onclick="openCategoryModal('wheelchair')">
+        <svg class="cat-svg" viewBox="0 0 40 40"><circle cx="20" cy="10" r="5"/><path d="M12 22h16M20 18v14"/><circle cx="12" cy="30" r="3"/><circle cx="28" cy="30" r="3"/></svg>
+        <div class="cat-name">Wheelchair</div>
+        <div class="cat-badge m">Masculino</div>
+      </div>
+    </div>
+    <div class="cats-gender-label reveal" style="margin-top:3rem;">Mujeres</div>
+    <div class="cats-grid reveal">
+      <div class="cat-tile" onclick="openCategoryModal('womans_physique')">
+        <svg class="cat-svg" viewBox="0 0 40 40"><ellipse cx="20" cy="13" rx="6" ry="8"/><path d="M9 36c0-7 5-11 11-11s11 4 11 11"/></svg>
+        <div class="cat-name">Woman's Physique</div>
+        <div class="cat-badge f">Femenino</div>
+      </div>
+      <div class="cat-tile" onclick="openCategoryModal('wellness')">
+        <svg class="cat-svg" viewBox="0 0 40 40"><path d="M20 4 L32 16 L20 36 L8 16 Z"/></svg>
+        <div class="cat-name">Wellness</div>
+        <div class="cat-badge f">Femenino</div>
+      </div>
+      <div class="cat-tile" onclick="openCategoryModal('figure')">
+        <svg class="cat-svg" viewBox="0 0 40 40"><polygon points="20,4 24,14 35,14 26,21 29,32 20,25 11,32 14,21 5,14 16,14"/></svg>
+        <div class="cat-name">Figure</div>
+        <div class="cat-badge f">Femenino</div>
+      </div>
+      <div class="cat-tile" onclick="openCategoryModal('bikini')">
+        <svg class="cat-svg" viewBox="0 0 40 40"><circle cx="20" cy="11" r="6"/><path d="M13 22 Q10 30 12 36 Q16 32 20 36 Q24 32 28 36 Q30 30 27 22 Q24 18 20 18 Q16 18 13 22Z"/></svg>
+        <div class="cat-name">Bikini</div>
+        <div class="cat-badge f">Femenino</div>
+      </div>
+      <div class="cat-tile" onclick="openCategoryModal('fit_model')">
+        <svg class="cat-svg" viewBox="0 0 40 40"><path d="M20 4 C28 4 34 10 34 18 C34 26 28 32 20 36 C12 32 6 26 6 18 C6 10 12 4 20 4Z"/></svg>
+        <div class="cat-name">Fit Model</div>
+        <div class="cat-badge f">Femenino</div>
+      </div>
+    </div>
+    
+    <!-- Divisiones / Subcategorías por edad y nivel -->
+    <div class="cats-gender-label reveal" style="margin-top:4.5rem;">Divisiones por Edad y Nivel</div>
+    <p style="font-family:'Rajdhani',sans-serif; font-size:1.05rem; color:rgba(255,255,255,0.5); max-width:600px; margin:0.5rem auto 2.5rem; line-height:1.6; text-align:center;">
+      Además de las categorías generales, los competidores se agrupan en divisiones específicas según su edad y nivel de experiencia en tarima. Haz clic para consultar los requisitos.
+    </p>
+    <div class="cats-grid reveal" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+      <div class="cat-tile" onclick="openDivisionModal('pre_juvenil')">
+        <svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="cat-name">Pre-Juvenil</div>
+        <div class="cat-badge m" style="border-color: rgba(201, 168, 76, 0.4); color: var(--gold-light);">Edad ≤ 19</div>
+      </div>
+      <div class="cat-tile" onclick="openDivisionModal('juvenil')">
+        <svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z"/></svg>
+        <div class="cat-name">Juvenil</div>
+        <div class="cat-badge m" style="border-color: rgba(201, 168, 76, 0.4); color: var(--gold-light);">Edad ≤ 24</div>
+      </div>
+      <div class="cat-tile" onclick="openDivisionModal('semi_novato')">
+        <svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a15 15 0 0 0-9 9c0 5 4 9 9 9s9-4 9-9a15 15 0 0 0-9-9z"/><path d="M9 12a5 5 0 0 0 5 5"/></svg>
+        <div class="cat-name">Semi-Novato</div>
+        <div class="cat-badge f">Debutantes</div>
+      </div>
+      <div class="cat-tile" onclick="openDivisionModal('novato')">
+        <svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="cat-name">Novato</div>
+        <div class="cat-badge f">Intermedio</div>
+      </div>
+      <div class="cat-tile" onclick="openDivisionModal('master')">
+        <svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>
+        <div class="cat-name">Master</div>
+        <div class="cat-badge m" style="border-color: rgba(201, 168, 76, 0.4); color: var(--gold-light);">F+35 / M+40</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VIDEO PROMO SECTION ===== -->
+<section id="video-promo" class="reveal">
+  <div class="vp-inner">
+    <div class="vp-head reveal">
+      <div class="vp-kicker">&#9654; Vikingos Classic V Edición</div>
+      <h2 class="vp-title">Siente la <em>Adrenalina</em><br/>del Escenario</h2>
+      <div class="vp-rule">
+        <div class="vp-rule-line"></div>
+        <div class="vp-rule-dot"></div>
+        <div class="vp-rule-line"></div>
+      </div>
+    </div>
+    <div class="vp-frame reveal reveal-delay-1">
+      <video id="promoVideo" preload="metadata" playsinline>
+        <source src="assets/video_promo.mp4" type="video/mp4">
+        Tu navegador no soporta reproducción de video.
+      </video>
+      <div class="vp-play-overlay" id="vpOverlay" onclick="togglePromoVideo()">
+        <div class="vp-play-btn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="5,3 19,12 5,21"/>
+          </svg>
+        </div>
+        <div class="vp-play-label">Reproducir Video</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function togglePromoVideo() {
+  const video = document.getElementById('promoVideo');
+  const overlay = document.getElementById('vpOverlay');
+  if (video.paused) {
+    video.play();
+    overlay.classList.add('hidden');
+  } else {
+    video.pause();
+    overlay.classList.remove('hidden');
+  }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const video = document.getElementById('promoVideo');
+  const overlay = document.getElementById('vpOverlay');
+  if (video) {
+    video.addEventListener('ended', function() {
+      overlay.classList.remove('hidden');
+      video.currentTime = 0;
+    });
+    video.addEventListener('click', function() {
+      if (!video.paused) {
+        video.pause();
+        overlay.classList.remove('hidden');
+      }
+    });
+  }
+});
+
+/* ---- Copiar métodos de pago al portapapeles ---- */
+function copyToClipboard(text, element) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      showTooltipCopied(element);
+    }).catch(function(err) {
+      fallbackCopyToClipboard(text, element);
+    });
+  } else {
+    fallbackCopyToClipboard(text, element);
+  }
+}
+
+function fallbackCopyToClipboard(text, element) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+  textArea.style.opacity = "0";
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      showTooltipCopied(element);
+    } else {
+      console.error('Fallback: Copiado fallido');
+    }
+  } catch (err) {
+    console.error('Fallback: Error al copiar', err);
+  }
+  document.body.removeChild(textArea);
+}
+
+function showTooltipCopied(element) {
+  const tooltip = element.querySelector('.pm-copy-tooltip');
+  if (tooltip) {
+    const originalText = tooltip.textContent;
+    tooltip.textContent = '¡Copiado!';
+    tooltip.style.opacity = '1';
+    tooltip.style.color = 'var(--gold-light)';
+    setTimeout(function() {
+      tooltip.textContent = originalText;
+      tooltip.style.opacity = '';
+      tooltip.style.color = '';
+    }, 2000);
+  }
+}
+</script>
+
+<section id="galeria">
+  <div class="gal-wrap">
+    <div class="section-head reveal">
+      <div class="s-eyebrow"><div class="s-line"></div><span class="s-tag">Ediciones anteriores</span><div class="s-line"></div></div>
+      <h2 class="s-title">Galeria de <em>Historia</em></h2>
+      <div class="s-rule"><div class="s-rule-line"></div><div class="s-rule-dot"></div><div class="s-rule-line"></div></div>
+    </div>
+
+    <!-- Tabs (generados dinámicamente) -->
+    <div class="gal-tabs reveal">
+      <button class="gal-tab active" id="tab-fotos" onclick="galFilter('fotos')">&#128247; Fotos (<span id="count-fotos"></span>)</button>
+      <button class="gal-tab" id="tab-videos" onclick="galFilter('videos')">&#9654; Videos (<span id="count-videos"></span>)</button>
+    </div>
+
+    <!-- Photo grid (generado por JS) -->
+    <div class="gal-grid reveal" id="gal-fotos"></div>
+
+    <!-- Video grid (generado por JS) -->
+    <div class="gal-grid" id="gal-videos" style="display:none;"></div>
+
+    <div class="gal-footer reveal">
+      <span class="gal-footer-text">Siguenos para ver el contenido completo de cada edicion</span>
+      <a href="https://www.instagram.com/vikingosclassic?igsh=MTZuOGQxNTJ3czYwYg==" target="_blank" class="btn-ig">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        @vikingosclassic
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div id="gal-lightbox" role="dialog" aria-modal="true" aria-label="Lightbox">
+  <button class="lb-close" onclick="lbClose()" aria-label="Cerrar">&times;</button>
+  <button class="lb-arrow" id="lb-prev" onclick="lbNav(-1)" aria-label="Anterior">&#8249;</button>
+  <div class="lb-img-wrap">
+    <img id="lb-img" src="" alt="Foto ampliada"/>
+  </div>
+  <button class="lb-arrow" id="lb-next" onclick="lbNav(1)" aria-label="Siguiente">&#8250;</button>
+  <div class="lb-counter" id="lb-counter"></div>
+</div>
+
+<script>
+// =============================================================
+// ██████╗  █████╗ ██╗     ███████╗██████╗ ██╗ █████╗
+// ██╔════╝ ██╔══██╗██║     ██╔════╝██╔══██╗██║██╔══██╗
+// ██║  ███╗███████║██║     █████╗  ██████╔╝██║███████║
+// ██║   ██║██╔══██║██║     ██╔══╝  ██╔══██╗██║██╔══██║
+// ╚██████╔╝██║  ██║███████╗███████╗██║  ██║██║██║  ██║
+//  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝
+//
+// ┌─────────────────────────────────────────────────────────┐
+// │  CONFIGURACION DE LA GALERIA — FACIL DE ACTUALIZAR      │
+// │                                                         │
+// │  Para agregar fotos:                                    │
+// │  1. Copia la foto a la carpeta "galeria"                │
+// │  2. Nombra la foto: gal_XX.jpeg  (ej: gal_27.jpeg)     │
+// │  3. Cambia TOTAL_FOTOS al nuevo número total            │
+// │                                                         │
+// │  Para agregar videos:                                   │
+// │  1. Copia el video a la carpeta "galeria"               │
+// │  2. Nombra el video: gal_vid_XX.mp4  (ej: gal_vid_06)  │
+// │  3. Cambia TOTAL_VIDEOS al nuevo número total           │
+// └─────────────────────────────────────────────────────────┘
+
+var TOTAL_FOTOS  = 26;   // ← Cambia este número para más fotos
+var TOTAL_VIDEOS = 5;    // ← Cambia este número para más videos
+
+// =============================================================
+// No necesitas modificar nada debajo de esta línea
+// =============================================================
+
+// Generar array de rutas de fotos automáticamente
+var lbImages = [];
+for (var f = 1; f <= TOTAL_FOTOS; f++) {
+  var numF = f < 10 ? '0' + f : '' + f;
+  lbImages.push('galeria/gal_' + numF + '.jpeg');
+}
+
+// Generar el grid de fotos
+(function buildFotoGrid() {
+  var grid = document.getElementById('gal-fotos');
+  var zoom = '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+  grid.innerHTML = lbImages.map(function(src, i) {
+    return '<div class="gal-item" onclick="lbOpen(' + i + ')">' +
+      '<img src="' + src + '" alt="Vikingos Classic foto ' + (i+1) + '" loading="lazy"/>' +
+      '<div class="gal-item-cap"><span>Vikingos Classic</span></div>' +
+      '<div class="gal-zoom-icon">' + zoom + '</div>' +
+      '</div>';
+  }).join('');
+  document.getElementById('count-fotos').textContent = TOTAL_FOTOS;
+})();
+
+// Generar el grid de videos automáticamente
+(function buildVideoGrid() {
+  var grid = document.getElementById('gal-videos');
+  var html = '';
+  for (var v = 1; v <= TOTAL_VIDEOS; v++) {
+    var numV = v < 10 ? '0' + v : '' + v;
+    html += '<div class="gal-vid-item show">' +
+      '<div class="gal-vid-badge">&#9654; Video ' + v + '</div>' +
+      '<video controls preload="metadata" playsinline>' +
+      '<source src="galeria/gal_vid_' + numV + '.mp4" type="video/mp4">' +
+      '</video></div>';
+  }
+  grid.innerHTML = html;
+  document.getElementById('count-videos').textContent = TOTAL_VIDEOS;
+})();
+
+// ---- Gallery filter tabs ----
+function galFilter(tab) {
+  var fotos = document.getElementById('gal-fotos');
+  var videos = document.getElementById('gal-videos');
+  var tF = document.getElementById('tab-fotos');
+  var tV = document.getElementById('tab-videos');
+  if (tab === 'fotos') {
+    fotos.style.display = '';
+    videos.style.display = 'none';
+    tF.classList.add('active');
+    tV.classList.remove('active');
+  } else {
+    fotos.style.display = 'none';
+    videos.style.display = '';
+    tV.classList.add('active');
+    tF.classList.remove('active');
+  }
+}
+
+// ---- Lightbox ----
+var lbIdx = 0;
+function lbOpen(i) {
+  lbIdx = i;
+  document.getElementById('lb-img').src = lbImages[lbIdx];
+  document.getElementById('lb-counter').textContent = (lbIdx+1) + ' / ' + lbImages.length;
+  document.getElementById('gal-lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function lbClose() {
+  document.getElementById('gal-lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function lbNav(dir) {
+  lbIdx = (lbIdx + dir + lbImages.length) % lbImages.length;
+  var img = document.getElementById('lb-img');
+  img.style.opacity = '0';
+  setTimeout(function(){
+    img.src = lbImages[lbIdx];
+    document.getElementById('lb-counter').textContent = (lbIdx+1) + ' / ' + lbImages.length;
+    img.style.transition = 'opacity .25s';
+    img.style.opacity = '1';
+  }, 150);
+}
+document.getElementById('gal-lightbox').addEventListener('click', function(e) {
+  if (e.target === this) lbClose();
+});
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('gal-lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'ArrowLeft') lbNav(-1);
+  if (e.key === 'Escape') lbClose();
+});
+</script>
+
+<section id="sobre">
+  <div class="sobre-layout">
+    <div class="reveal">
+      <div class="sobre-ghost">V</div>
+      <div class="sobre-kicker">Quinta edicion &middot; Angels Gym</div>
+      <h2 class="sobre-h">La Escuela<br/>de Campeones</h2>
+      <p class="sobre-p">Vikingos Classic es el evento de fisicoculturismo y fitness mas epico de Cundinamarca. Ano tras ano reunimos a los guerreros mas dedicados del iron sport en un escenario donde la fuerza, la disciplina y el arte se convierten en leyenda.</p>
+      <p class="sobre-p">Con cinco ediciones forjando campeones, el Vikingos Classic se ha consolidado como la plataforma donde los atletas demuestran que el verdadero espiritu vikingo no muere, evoluciona.</p>
+      <div class="sobre-divider"></div>
+      <div>
+        <div class="org-lbl">Organizado por</div>
+        <div class="org-val">Angels Gym</div>
+      </div>
+    </div>
+    <div class="sobre-stats reveal reveal-delay-1">
+      <div class="stat-block">
+        <div class="stat-num red">V</div>
+        <div class="stat-lbl">Ediciones realizadas</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num gold">9</div>
+        <div class="stat-lbl">Categorias en competencia</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num" style="font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:rgba(255,255,255,.7);">Cajica</div>
+        <div class="stat-lbl">Cundinamarca</div>
+        <div class="stat-sub">Centro Cultural y de Convenciones</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECCIÓN DE INSCRIPCIÓN ===== -->
+<section id="inscripcion">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-head reveal">
+      <div class="s-eyebrow"><div class="s-line"></div><span class="s-tag">Registro de atletas</span><div class="s-line"></div></div>
+      <h2 class="s-title">Inscripcion <em>Abierta</em></h2>
+      <div class="s-rule"><div class="s-rule-line"></div><div class="s-rule-dot"></div><div class="s-rule-line"></div></div>
+    </div>
+    <div class="viking-ticket reveal">
+      <div class="ins-left-ticket">
+        <div class="ins-open-badge"><div class="open-dot"></div>Inscripciones abiertas</div>
+        <p style="margin-top:2rem;">Listo para demostrar tu fortaleza en el escenario? Las inscripciones para la quinta edicion del Vikingos Classic estan abiertas. Completa el formulario oficial y asegura tu lugar.</p>
+        <div class="price-card">
+          <div class="price-num">$280 cop</div>
+          <div>
+            <div class="price-info-label">inscripcion competidores</div>
+            <div class="price-info-desc">Los atletas inscritos ingresan sin costo adicional. Boleteria disponible en taquilla.</div>
+          </div>
+        </div>
+        <a href="https://forms.gle/aFEUgWzPXxUtX6jh8" target="_blank" class="btn-inscribir" style="margin-top: 2.2rem;">
+          Acceder al formulario
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+      <div class="ins-right-ticket" style="display: flex; flex-direction: column; justify-content: center;">
+        <!-- Formas de Pago Section -->
+        <div class="payment-methods" style="margin-top: 0; margin-bottom: 0; width: 100%;">
+          <div class="pm-title">Formas de Pago</div>
+          <div class="pm-grid">
+            <!-- Bancolombia -->
+            <div class="pm-card bancolombia" onclick="copyToClipboard('33562391628', this)">
+              <div class="pm-brand">
+                <span class="brand-name">Bancolombia</span>
+              </div>
+              <div class="pm-qr-img">
+                <img src="assets/bancolombia.jpeg" alt="QR Bancolombia" />
+              </div>
+              <div class="pm-details">
+                <span class="pm-type">Cta. Ahorros</span>
+                <span class="pm-num">33562391628</span>
+              </div>
+              <div class="pm-copy-tooltip">Copiar número</div>
+            </div>
+            
+            <!-- Nequi -->
+            <div class="pm-card nequi" onclick="copyToClipboard('3123634033', this)">
+              <div class="pm-brand">
+                <span class="brand-name">Nequi</span>
+              </div>
+              <div class="pm-qr-img">
+                <img src="assets/nequi.jpeg" alt="QR Nequi" />
+              </div>
+              <div class="pm-details">
+                <span class="pm-type">Jose Angel</span>
+                <span class="pm-num">3123634033</span>
+              </div>
+              <div class="pm-copy-tooltip">Copiar número</div>
+            </div>
+
+            <!-- Daviplata -->
+            <div class="pm-card daviplata" onclick="copyToClipboard('3123634033', this)">
+              <div class="pm-brand">
+                <span class="brand-name">Daviplata</span>
+              </div>
+              <div class="pm-qr-img pm-qr-pending">
+                <img src="assets/daviplata.jpeg" alt="QR Daviplata" onload="this.parentElement.classList.remove('pm-qr-pending');" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="pm-qr-placeholder" style="display:none;">
+                  <svg viewBox="0 0 48 48" fill="none"><rect x="4" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><rect x="8" y="8" width="10" height="10" fill="currentColor"/><rect x="26" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><rect x="30" y="8" width="10" height="10" fill="currentColor"/><rect x="4" y="26" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><rect x="8" y="30" width="10" height="10" fill="currentColor"/><rect x="26" y="26" width="8" height="8" fill="currentColor"/><rect x="38" y="26" width="6" height="6" fill="currentColor"/><rect x="26" y="38" width="6" height="6" fill="currentColor"/><rect x="36" y="36" width="8" height="8" fill="currentColor"/></svg>
+                  <span>QR próximamente</span>
+                </div>
+              </div>
+              <div class="pm-details">
+                <span class="pm-type">Jose Angel</span>
+                <span class="pm-num">3123634033</span>
+              </div>
+              <div class="pm-copy-tooltip">Copiar número</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECCIÓN DE REGLAMENTO ===== -->
+<section id="reglamento" class="reveal">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-head reveal">
+      <div class="s-eyebrow"><div class="s-line"></div><span class="s-tag">Reglas de competición</span><div class="s-line"></div></div>
+      <h2 class="s-title">Reglamento y <em>Puesta en Tarima</em></h2>
+      <div class="s-rule"><div class="s-rule-line"></div><div class="s-rule-dot"></div><div class="s-rule-line"></div></div>
+      <p style="font-family:'Rajdhani',sans-serif; font-size:1.05rem; color:rgba(255,255,255,0.5); max-width:600px; margin:1.5rem auto 0; line-height:1.6; text-align:center;">
+        Consulta las normas oficiales de conducta, tiempos máximos de presentación y reglas del juzgamiento absoluto en tarima.
+      </p>
+    </div>
+    
+    <div class="rules-grid reveal">
+      <!-- Tarjeta 1: Presentación -->
+      <div class="rule-card">
+        <svg class="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <div class="rule-title">Presentación</div>
+        <ul class="rule-list">
+          <li><strong>Presentación Individual:</strong> Cada atleta pasa al centro de la tarima individualmente en orden numérico y automáticamente realiza las poses reglamentarias de su categoría.</li>
+          <li><strong>Tiempo Límite:</strong> Cada competidor tiene máximo 30" segundos para realizarlas.</li>
+          <li><strong>Comparaciones:</strong> El juez principal llamará a los competidores a la línea de competencia en orden numérico para realizar los cuartos de giro (si aplica) y poses comparativas de su categoría.</li>
+        </ul>
+        <div class="btn-afiche" onclick="openLightbox('reglamento/reg_presentacion.jpeg', 'Puesta en Tarima - Presentación')">Ver Afiche Oficial</div>
+      </div>
+      
+      <!-- Tarjeta 2: Coreografía -->
+      <div class="rule-card">
+        <svg class="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <div class="rule-title">Coreografía</div>
+        <ul class="rule-list">
+          <li><strong>Rutina Planificada:</strong> Los atletas serán llamados al escenario de manera individual en orden numérico para realizar su rutina coreográfica libre con práctica musical.</li>
+          <li><strong>Tiempo Límite:</strong> Cada competidor tiene un máximo de 60" segundos para realizarla.</li>
+          <li><strong>Filtro Top 5:</strong> Dependiendo del número de competidores, el promotor y el juez principal pueden decidir que solo el Top 5 realice su rutina coreográfica completa.</li>
+        </ul>
+        <div class="btn-afiche" onclick="openLightbox('reglamento/reg_coreografia.jpeg', 'Puesta en Tarima - Coreografía')">Ver Afiche Oficial</div>
+      </div>
+      
+      <!-- Tarjeta 3: Prohibiciones -->
+      <div class="rule-card">
+        <svg class="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        <div class="rule-title">Prohibiciones</div>
+        <ul class="rule-list">
+          <li><strong>Conducta:</strong> Prohibido el uso de lenguaje vulgar, profano u ofensivo. Prohibidos empujones o choques.</li>
+          <li><strong>Bronceado y Aceites:</strong> Uso moderado con tono natural. Prohibidos tonos metálicos o artificiales (dorados, naranjas, verdes).</li>
+          <li><strong>Tarima:</strong> Prohibido acostarse o caer. La "Postura de la luna" está prohibida. Prohibido chicle o líquidos.</li>
+          <li><strong>Normas del Traje:</strong> Prohibidos accesorios (gafas de sol, relojes, cadenas). El número de competidor debe portarse en el lado izquierdo del bañador inferior.</li>
+        </ul>
+        <div class="btn-afiche" onclick="openLightbox('reglamento/reg_prohibiciones.jpeg', 'Prohibiciones en el Escenario')">Ver Afiche Oficial</div>
+      </div>
+      
+      <!-- Tarjeta 4: Overall & Posedown -->
+      <div class="rule-card">
+        <svg class="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a4 4 0 0 1 4 4v3H8V6a4 4 0 0 1 4-4z"/></svg>
+        <div class="rule-title">Overall &amp; Posedown</div>
+        <ul class="rule-list">
+          <li><strong>Overall:</strong> Se requiere un mínimo de 3 clases en la división. En categorías Open y Novatos, requiere autorización del promotor y el juez principal.</li>
+          <li><strong>Campeón Absoluto:</strong> Los ganadores de cada clase (Top 1) competirán en orden numérico para definir el Campeón Absoluto de la categoría.</li>
+          <li><strong>Posedown:</strong> Los finalistas tendrán 60" segundos para tomarse el escenario mostrando poses libres e interactuar con el público.</li>
+        </ul>
+        <div class="btn-afiche" onclick="openLightbox('reglamento/reg_overall.jpeg', 'Overall & Posedown')">Ver Afiche Oficial</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACTO / COMUNIDAD ===== -->
+<section id="contacto">
+  <div class="contacto-wrap">
+    <div class="section-head reveal">
+      <div class="s-eyebrow"><div class="s-line"></div><span class="s-tag">Redes y contacto</span><div class="s-line"></div></div>
+      <h2 class="s-title">Unete a la <em>Comunidad</em></h2>
+      <div class="s-rule"><div class="s-rule-line"></div><div class="s-rule-dot"></div><div class="s-rule-line"></div></div>
+    </div>
+    <div class="social-row reveal">
+      <a href="https://www.instagram.com/vikingosclassic?igsh=MTZuOGQxNTJ3czYwYg==" target="_blank" class="soc-card">
+        <div class="soc-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </div>
+        <div>
+          <div class="soc-plat">Instagram</div>
+          <div class="soc-handle">@vikingosclassic</div>
+        </div>
+      </a>
+      <a href="https://www.tiktok.com/@vikingosclassic?_r=1&_t=ZS-96krK32HiqL" target="_blank" class="soc-card">
+        <div class="soc-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+        </div>
+        <div>
+          <div class="soc-plat">TikTok</div>
+          <div class="soc-handle">@vikingosclassic</div>
+        </div>
+      </a>
+    </div>
+    <div class="wa-bar reveal">
+      <div>
+        <div class="wa-lbl">WhatsApp &middot; Informacion y consultas</div>
+        <div class="wa-num">+57 312 363 4033</div>
+      </div>
+      <a href="https://wa.me/573123634033" target="_blank" class="btn-wa">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.899.53 3.668 1.444 5.178L2 22l4.945-1.425A9.953 9.953 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" fill-rule="evenodd" clip-rule="evenodd"/></svg>
+        Escribir por WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <a href="#hero" class="footer-logo">
+        <img src="assets/logo.png" alt="Vikingos Classic"/>
+      </a>
+      <div class="footer-tagline">"Al mejor estilo vikingo"</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Navegacion</div>
+      <ul class="footer-links">
+        <li><a href="#evento">El Evento</a></li>
+        <li><a href="#categorias">Categorias</a></li>
+        <li><a href="#galeria">Galeria</a></li>
+        <li><a href="#sobre">Nosotros</a></li>
+        <li><a href="#inscripcion">Inscripcion</a></li>
+        <li><a href="#reglamento">Reglamento</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contacto</div>
+      <div class="footer-contact">
+        <div class="fc-row"><a href="https://wa.me/573123634033">+57 312 363 4033</a></div>
+        <div class="fc-row"><a href="https://www.instagram.com/vikingosclassic?igsh=MTZuOGQxNTJ3czYwYg==" target="_blank">@vikingosclassic</a></div>
+        <div class="fc-row">Cajica, Cundinamarca</div>
+        <div class="fc-row">Centro Cultural y de Convenciones</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">2026 Vikingos Classic &middot; Angels Gym</div>
+    <div class="footer-made">Fisicoculturismo y Fitness &middot; V Edicion</div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>80);
+});
+function toggleMenu(){
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function tick(){
+  const target=new Date('2026-06-07T17:00:00Z');
+  const now=new Date();
+  const diff=target-now;
+  if(diff<=0){['cd-d','cd-h','cd-m','cd-s'].forEach(id=>document.getElementById(id).textContent='00');return;}
+  const pad=n=>String(n).padStart(2,'0');
+  document.getElementById('cd-d').textContent=pad(Math.floor(diff/86400000));
+  document.getElementById('cd-h').textContent=pad(Math.floor((diff%86400000)/3600000));
+  document.getElementById('cd-m').textContent=pad(Math.floor((diff%3600000)/60000));
+  document.getElementById('cd-s').textContent=pad(Math.floor((diff%60000)/1000));
+}
+tick();setInterval(tick,1000);
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('up');obs.unobserve(e.target);}});
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Datos detallados de las categorías
+const categoryDetails = {
+  bodybuilding: {
+    title: "Bodybuilding",
+    gender: "Masculino",
+    badgeClass: "m",
+    image: "categorias/cat_bodybuilding.jpeg",
+    description: "En esta categoría observamos un desarrollo exuberante de la masa muscular, en la cual priman la proporción, la simetría, la separación muscular, la estriación muscular y la profundidad en los cortes, conservando siempre una proporción en X y en V.",
+    poses: [
+      "1. Doble bíceps de frente",
+      "2. Expansión de frente",
+      "3. Pecho de lado",
+      "4. Doble bíceps de espalda",
+      "5. Expansión de espalda",
+      "6. Tríceps de lado",
+      "7. Abdomen y muslos"
+    ],
+    suit: {
+      type: "Tanga tipo V",
+      rules: "Es una tanga tipo V. No se permite tipo hilo ni tampoco ajustarlo por encima de los glúteos."
+    },
+    choreography: "Coreografía individual obligatoria de 1 minuto."
+  },
+  classic_physique: {
+    title: "Classic Physique",
+    gender: "Masculino",
+    badgeClass: "m",
+    image: "categorias/cat_classic_physique.jpeg",
+    description: "Esta categoría busca un punto intermedio entre Men's Physique y Culturismo, conservando una línea clásica con proporción en X hacia la cintura y excelente simetría con una relación peso con altura.",
+    poses: [
+      "1. Doble bíceps de frente",
+      "2. Pecho de lado",
+      "3. Doble bíceps de espalda",
+      "4. Abdomen y muslos",
+      "5. Pose clásica favorita"
+    ],
+    suit: {
+      type: "Bañador tipo tanga",
+      rules: "Debe ser un bañador tipo tanga. No puede ser bóxer."
+    },
+    choreography: "Coreografía individual obligatoria de 1 minuto.",
+    classes: [
+      {
+        name: "CLASE \"A\" (Hasta 170 cm)",
+        limits: [
+          { height: "Hasta 1.63 m", weight: "Hasta 75.5 kg" },
+          { height: "Hasta 1.65 m", weight: "Hasta 78.0 kg" },
+          { height: "Hasta 1.68 m", weight: "Hasta 80.3 kg" },
+          { height: "Hasta 1.70 m", weight: "Hasta 82.6 kg" }
+        ]
+      },
+      {
+        name: "CLASE \"B\" (Hasta 178 cm)",
+        limits: [
+          { height: "Hasta 1.73 m", weight: "Hasta 84.8 kg" },
+          { height: "Hasta 1.75 m", weight: "Hasta 88.0 kg" },
+          { height: "Hasta 1.78 m", weight: "Hasta 91.6 kg" }
+        ]
+      },
+      {
+        name: "CLASE \"C\" (Hasta 183 cm)",
+        limits: [
+          { height: "Hasta 1.80 m", weight: "Hasta 94.8 kg" },
+          { height: "Hasta 1.83 m", weight: "Hasta 98.4 kg" }
+        ]
+      },
+      {
+        name: "CLASE \"D\" (Más de 183 cm)",
+        limits: [
+          { height: "Hasta 1.85 m", weight: "Hasta 101.6 kg" },
+          { height: "Hasta 1.88 m", weight: "Hasta 105.2 kg" },
+          { height: "Hasta 1.91 m", weight: "Hasta 108.4 kg" },
+          { height: "Hasta 1.93 m", weight: "Hasta 111.6 kg" },
+          { height: "Hasta 1.96 m", weight: "Hasta 114.8 kg" },
+          { height: "Hasta 1.98 m", weight: "Hasta 117.9 kg" },
+          { height: "Hasta 2.01 m", weight: "Hasta 121.1 kg" },
+          { height: "Más de 2.01 m", weight: "Hasta 124.3 kg" }
+        ]
+      }
+    ]
+  },
+  mens_physique: {
+    title: "Men's Physique",
+    gender: "Masculino",
+    badgeClass: "m",
+    image: "categorias/cat_mens_physique.jpeg",
+    description: "La categoría cuenta con un físico atlético, de musculatura no tan exuberante como en culturismo pero conservando la proporción y la simetría. Buena separación de hombros y proporción en V con relación a la cintura.",
+    poses: [
+      "1. De frente",
+      "2. De espalda (al posar es opcional llevar la mano a la cintura)"
+    ],
+    suit: {
+      type: "Bermuda de competencia",
+      rules: "Es un bañador tipo bermuda. No puede llevar distintivos que no sean de fábrica, el cordón no debe llevarse suelto."
+    }
+  },
+  wheelchair: {
+    title: "Wheelchair",
+    gender: "Masculino",
+    badgeClass: "m",
+    image: "categorias/cat_wheelchair.jpeg",
+    description: "Categoría diseñada para atletas que compiten en silla de ruedas. Se evalúa principalmente el desarrollo de la masa muscular superior, la simetría, la densidad y la definición del tren superior.",
+    poses: [
+      "1. Doble bíceps de frente",
+      "2. Pecho de lado",
+      "3. Doble bíceps de espalda",
+      "4. Tríceps de lado",
+      "5. Más musculoso"
+    ],
+    suit: {
+      type: "Pantalón largo / Bermuda",
+      rules: "Pantalón deportivo largo o bermuda holgada. Silla de ruedas limpia y de presentación formal."
+    }
+  },
+  womans_physique: {
+    title: "Woman's Physique",
+    gender: "Femenino",
+    badgeClass: "f",
+    image: "categorias/cat_womans_physique.jpeg",
+    description: "Busca un desarrollo muscular femenino superior al de la categoría Figure pero sin llegar a la hipertrofia extrema del culturismo femenino tradicional. Se valora la definición, simetría y una presentación estética muy elegante.",
+    poses: [
+      "1. Doble bíceps de frente (con manos abiertas)",
+      "2. Perfil de pecho",
+      "3. Doble bíceps de espalda (con manos abiertas)",
+      "4. Perfil de tríceps",
+      "5. Abdomen y muslos"
+    ],
+    suit: {
+      type: "Bikini en V de 2 piezas (Sin tacones)",
+      rules: "Las competidoras posan descalzas (sin tacones). Bañador de dos piezas tipo bikini en V. Joyería opcional."
+    }
+  },
+  wellness: {
+    title: "Wellness Fitness",
+    gender: "Femenino",
+    badgeClass: "f",
+    image: "categorias/cat_wellness.jpeg",
+    description: "La categoría cuenta con un físico atlético, con mayor desarrollo de la masa corporal en caderas, glúteos y muslos. El tren superior cuenta con un desarrollo mucho menor al de la parte inferior.",
+    poses: [
+      "1. De frente",
+      "2. Perfil izquierdo",
+      "3. De espalda",
+      "4. Perfil derecho"
+    ],
+    suit: {
+      type: "Bikini en V de 2 piezas",
+      rules: "Tacón máximo 12cm (obligatorio), joyería a elección. El bañador de competencia consta de 2 piezas tipo bikini en V, la parte inferior no puede ser hilo o similares."
+    }
+  },
+  figure: {
+    title: "Figure",
+    gender: "Femenino",
+    badgeClass: "f",
+    image: "categorias/cat_figure.jpeg",
+    description: "Esta categoría busca un mayor desarrollo muscular en general, en la profundidad de la espalda y su ancho, conservando la simetría y una pequeña separación muscular.",
+    poses: [
+      "1. De frente",
+      "2. Perfil izquierdo",
+      "3. De espalda",
+      "4. Perfil derecho"
+    ],
+    suit: {
+      type: "Bikini en V de 2 piezas",
+      rules: "Tacón obligatorio, joyería opcional. El bañador de competencia consta de 2 piezas tipo bikini en V, la parte inferior no puede ser hilo o similares."
+    }
+  },
+  bikini: {
+    title: "Bikini Fitness",
+    gender: "Femenino",
+    badgeClass: "f",
+    image: "categorias/cat_bikini.jpeg",
+    description: "Se evalúa la proporción, simetría, el tono muscular, el dominio de tarima y la correcta presentación. Recordemos que no se debe contar con una definición extrema ni un desarrollo muscular exuberante.",
+    poses: [
+      "1. De frente",
+      "2. De espalda (las poses deben ser muy femeninas sin pasar a lo vulgar)"
+    ],
+    suit: {
+      type: "Bikini de 2 piezas",
+      rules: "Tacón máximo 12cm (obligatorio), joyería a elección. El bañador de competencia consta de 2 piezas tipo bikini, la parte inferior no puede ser hilo o similares."
+    }
+  },
+  fit_model: {
+    title: "Fit Model",
+    gender: "Femenino",
+    badgeClass: "f",
+    image: "categorias/cat_fit_model.jpeg",
+    description: "Pequeña cantidad de músculo y forma femenina, menos músculo y menos acondicionamiento a la Bikini, equilibrio entre la parte superior e inferior, no separación en ninguna parte del cuerpo, no hombros redondos, sin grabados en las secciones medias, glúteos llenos.",
+    poses: [
+      "1. De frente",
+      "2. De espalda"
+    ],
+    suit: {
+      type: "Bikini de 2 piezas (Sin brillos)",
+      rules: "Tacón máximo 12cm (obligatorio), joyería a elección. El bañador de competencia consta de 2 piezas tipo bikini, la parte inferior no puede ser hilo o similares. No brillos."
+    }
+  }
+};
+
+function openCategoryModal(catId) {
+  const data = categoryDetails[catId];
+  if (!data) return;
+  
+  document.getElementById('modalTitle').textContent = data.title;
+  
+  const badge = document.getElementById('modalBadge');
+  badge.textContent = data.gender;
+  badge.className = 'cat-modal-badge ' + data.badgeClass;
+  
+  document.getElementById('modalDesc').textContent = data.description;
+  
+  // Render image if exists and load it dynamically
+  const imageWrap = document.getElementById('modalImageWrap');
+  const modalImg = document.getElementById('modalImage');
+  if (data.image) {
+    // Definimos los eventos ANTES de asignar el src para asegurar que se capturen correctamente
+    modalImg.onload = function() {
+      imageWrap.style.display = 'block';
+    };
+    modalImg.onerror = function() {
+      imageWrap.style.display = 'none';
+    };
+    modalImg.src = data.image;
+    modalImg.alt = data.title;
+  } else {
+    imageWrap.style.display = 'none';
+  }
+  
+  // Render poses list
+  const posesList = document.getElementById('modalPoses');
+  posesList.innerHTML = '';
+  data.poses.forEach(pose => {
+    const li = document.createElement('li');
+    li.textContent = pose;
+    posesList.appendChild(li);
+  });
+  
+  // Render suit info
+  const suitDiv = document.getElementById('modalSuit');
+  suitDiv.innerHTML = `
+    <div class="cat-modal-suit-type">${data.suit.type}</div>
+    <div class="cat-modal-suit-rules">${data.suit.rules}</div>
+  `;
+  
+  // Render height/weight classes if they exist
+  const classesSection = document.getElementById('modalClassesSection');
+  const classesDiv = document.getElementById('modalClasses');
+  if (data.classes) {
+    classesDiv.innerHTML = '';
+    data.classes.forEach(group => {
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'cat-modal-class-group';
+      
+      const title = document.createElement('div');
+      title.className = 'cat-modal-class-name';
+      title.textContent = group.name;
+      groupDiv.appendChild(title);
+      
+      const table = document.createElement('table');
+      table.className = 'cat-modal-class-table';
+      group.limits.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.height}</td>
+          <td>Límite: ${row.weight}</td>
+        `;
+        table.appendChild(tr);
+      });
+      groupDiv.appendChild(table);
+      classesDiv.appendChild(groupDiv);
+    });
+    classesSection.style.display = 'block';
+  } else {
+    classesSection.style.display = 'none';
+  }
+  
+  // Choreography section
+  const choreoSection = document.getElementById('modalChoreographySection');
+  if (data.choreography) {
+    document.getElementById('modalChoreography').textContent = data.choreography;
+    choreoSection.style.display = 'block';
+  } else {
+    choreoSection.style.display = 'none';
+  }
+  
+  const modal = document.getElementById('categoryModal');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden'; // Lock background scrolling
+}
+
+function closeCategoryModal(e) {
+  const modal = document.getElementById('categoryModal');
+  modal.classList.remove('open');
+  document.body.style.overflow = ''; // Unlock background scrolling
+}
+
+// Datos de las subcategorías / divisiones
+const divisionDetails = {
+  pre_juvenil: {
+    title: "División Pre-Juvenil",
+    gender: "Clase Única",
+    badgeClass: "m",
+    image: "categorias/sub_pre_juvenil.jpeg",
+    description: "División de edad diseñada para los competidores más jóvenes que inician su trayectoria en el fisicoculturismo y fitness.",
+    poses: [
+      "Competidores con edad máxima a 19 años.",
+      "Esta división es de clase única.",
+      "El atleta que se inscriba en esta división puede participar de manera opcional en la división Semi Novato o Novato."
+    ],
+    suit: {
+      type: "Normativa de Vestimenta",
+      rules: "Se rige bajo el reglamento de bañador y accesorios de la categoría principal en la que se inscriba."
+    }
+  },
+  juvenil: {
+    title: "División Juvenil",
+    gender: "Clase Única",
+    badgeClass: "m",
+    image: "categorias/sub_juvenil.jpeg",
+    description: "División de edad para jóvenes atletas en etapa de desarrollo competitivo.",
+    poses: [
+      "Competidores con edad máxima a 24 años.",
+      "Esta división es de clase única.",
+      "El atleta que se inscriba en esta división puede participar de manera opcional en la división Semi Novato o Novato."
+    ],
+    suit: {
+      type: "Normativa de Vestimenta",
+      rules: "Se rige bajo el reglamento de bañador y accesorios de la categoría principal en la que se inscriba."
+    }
+  },
+  semi_novato: {
+    title: "División Semi-Novato",
+    gender: "Clase Única",
+    badgeClass: "f",
+    image: "categorias/sub_semi_novato.jpeg",
+    description: "División especial para atletas que están dando sus primeros pasos en los escenarios competitivos.",
+    poses: [
+      "Atletas que compiten por primera vez en competencias de Vikingos Classic.",
+      "Esta división es de clase única.",
+      "El atleta que se inscriba en esta división puede participar de manera opcional en las divisiónes por edad (Pre-Juvenil, Juvenil, Master)."
+    ],
+    suit: {
+      type: "Normativa de Vestimenta",
+      rules: "Se rige bajo el reglamento de bañador y accesorios de la categoría principal en la que se inscriba."
+    }
+  },
+  novato: {
+    title: "División Novato",
+    gender: "Nivel Inicial",
+    badgeClass: "f",
+    image: "categorias/sub_novato.jpeg",
+    description: "División enfocada en atletas con experiencia previa que aún no han alcanzado el primer puesto absoluto.",
+    poses: [
+      "Podrán participar en esta división los atletas que no hayan ganado el primer 1° puesto en la categoría inscrita en competencias anteriores de Vikingos Classic.",
+      "El atleta que haya participado en esta división y obtengan el 1° primer puesto automáticamente deberá inscribirse en próximas competencias de Vikingos Classic en la división Open (Avanzados).",
+      "El atleta que se inscriba en esta división puede participar de manera opcional en las división Open y/o por edad (Pre-Juvenil, Juvenil, Master) según corresponda."
+    ],
+    suit: {
+      type: "Normativa de Vestimenta",
+      rules: "Se rige bajo el reglamento de bañador y accesorios de la categoría principal en la que se inscriba."
+    }
+  },
+  master: {
+    title: "División Master",
+    gender: "Clase Única",
+    badgeClass: "m",
+    image: "categorias/sub_master.jpeg",
+    description: "División de madurez muscular diseñada para competidores veteranos de alto nivel.",
+    poses: [
+      "Competidores división femenina: más de 35 años.",
+      "Competidores división masculina: más de 40 años.",
+      "Esta división es de clase única.",
+      "El atleta que se inscriba en esta división puede participar de manera opcional en la división Semi Novato, Novato y/o Open."
+    ],
+    suit: {
+      type: "Normativa de Vestimenta",
+      rules: "Se rige bajo el reglamento de bañador y accesorios de la categoría principal en la que se inscriba."
+    }
+  }
+};
+
+function openDivisionModal(divId) {
+  const data = divisionDetails[divId];
+  if (!data) return;
+  
+  document.getElementById('modalTitle').textContent = data.title;
+  
+  const badge = document.getElementById('modalBadge');
+  badge.textContent = data.gender;
+  badge.className = 'cat-modal-badge ' + data.badgeClass;
+  
+  document.getElementById('modalDesc').textContent = data.description;
+  
+  // Render image if exists
+  const imageWrap = document.getElementById('modalImageWrap');
+  const modalImg = document.getElementById('modalImage');
+  if (data.image) {
+    modalImg.onload = function() {
+      imageWrap.style.display = 'block';
+    };
+    modalImg.onerror = function() {
+      imageWrap.style.display = 'none';
+    };
+    modalImg.src = data.image;
+    modalImg.alt = data.title;
+  } else {
+    imageWrap.style.display = 'none';
+  }
+  
+  // Render rules
+  const posesList = document.getElementById('modalPoses');
+  posesList.innerHTML = '';
+  data.poses.forEach(rule => {
+    const li = document.createElement('li');
+    li.textContent = rule;
+    posesList.appendChild(li);
+  });
+  
+  // Render suit info
+  const suitDiv = document.getElementById('modalSuit');
+  suitDiv.innerHTML = `
+    <div class="cat-modal-suit-type">${data.suit.type}</div>
+    <div class="cat-modal-suit-rules">${data.suit.rules}</div>
+  `;
+  
+  // Hide choreography section for divisions
+  document.getElementById('modalChoreographySection').style.display = 'none';
+  
+  const modal = document.getElementById('categoryModal');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// Close modal with Escape key
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeCategoryModal();
+    closeLightbox();
+  }
+});
+
+// Lightbox para Afiches del Reglamento
+function openLightbox(imgUrl, imgAlt) {
+  const lightbox = document.getElementById('imageLightbox');
+  const img = document.getElementById('lightboxImg');
+  img.src = imgUrl;
+  img.alt = imgAlt;
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  const lightbox = document.getElementById('imageLightbox');
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+</script>
+
+<!-- Modal de Categoría -->
+<div class="cat-modal" id="categoryModal" onclick="closeCategoryModal(event)">
+  <div class="cat-modal-card" onclick="event.stopPropagation()">
+    <button class="cat-modal-close" onclick="closeCategoryModal(event)">&times;</button>
+    <div class="cat-modal-header">
+      <h3 class="cat-modal-title" id="modalTitle">Nombre de Categoría</h3>
+      <span class="cat-modal-badge" id="modalBadge">Masculino</span>
+    </div>
+    <p class="cat-modal-desc" id="modalDesc">Descripción larga de la categoría...</p>
+    
+    <!-- Imagen oficial de la categoría -->
+    <div class="cat-modal-image-wrap" id="modalImageWrap" style="display: none;">
+      <img src="" alt="" class="cat-modal-img" id="modalImage">
+    </div>
+    
+    <div class="cat-modal-body">
+      <div class="cat-modal-section">
+        <h4 class="cat-modal-section-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zM12 17h.01M12 10v4" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
+          Poses Reglamentarias
+        </h4>
+        <ul class="cat-modal-list" id="modalPoses">
+          <!-- Dinámico -->
+        </ul>
+      </div>
+      
+      <div class="cat-modal-section">
+        <h4 class="cat-modal-section-title">
+          <svg viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
+          Bañador de Competencia
+        </h4>
+        <div class="cat-modal-suit" id="modalSuit">
+          <!-- Dinámico -->
+        </div>
+      </div>
+
+      <!-- Sección de Clases y Límites de Peso (Solo si aplica) -->
+      <div class="cat-modal-section" id="modalClassesSection" style="display: none;">
+        <h4 class="cat-modal-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+          Límites de Peso y Estatura
+        </h4>
+        <div class="cat-modal-classes" id="modalClasses">
+          <!-- Dinámico -->
+        </div>
+      </div>
+
+      <div class="cat-modal-section" id="modalChoreographySection" style="display: none;">
+        <h4 class="cat-modal-section-title">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
+          Coreografía
+        </h4>
+        <p class="cat-modal-text" id="modalChoreography">
+          <!-- Dinámico -->
+        </p>
+      </div>
+    </div>
+    
+    <div class="cat-modal-footer">
+      <div class="cat-modal-logo-wrap">
+        <img src="assets/logo.png" alt="Vikingos Classic" class="cat-modal-logo">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox para Afiches de Reglamento -->
+<div class="cat-modal" id="imageLightbox" onclick="closeLightbox()">
+  <div class="cat-modal-card" style="max-width: 500px; padding: 1.5rem; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation()">
+    <button class="cat-modal-close" onclick="closeLightbox()">&times;</button>
+    <img src="" alt="" id="lightboxImg" style="width: 100%; height: auto; border-radius: 4px; display: block; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+  </div>
+</div>
+
+</body>
+</html>
