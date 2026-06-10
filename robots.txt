@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nivek2329.github.io/DOPO-2026/sitemap.xml
+Sitemap: https://kesthen.github.io/vikingos-paguina-web/sitemap.xml
