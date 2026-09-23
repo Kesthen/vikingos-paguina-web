@@ -3,121 +3,601 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clasificación de Competidores</title>
+  <title>Vikingos Classic Bogotá | Inscripciones y Clasificación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Clasificación de Competidores</h1>
-    <form id="competidorForm">
-      <!-- Campos del formulario (número, nombre, cédula, ciudad) -->
-      <label for="numero">Número:</label>
-      <input type="number" id="numero" required min="1">
-      
-      <label for="nombre">Nombre:</label>
-      <input type="text" id="nombre" required>
-      
-      <label for="cedula">Cédula:</label>
-      <input type="text" id="cedula" required>
-      
-      <label for="ciudad">Ciudad:</label>
-      <input type="text" id="ciudad" required>
-      
-      <!-- Selector de categoría -->
-      <label for="categoria">Categoría:</label>
-      <select id="categoria" required>
-        <option value="">Seleccione...</option>
-        <option value="bodybuilding">Bodybuilding</option>
-        <option value="classic_physique">Classic Physique</option>
-        <option value="mens_physique">Men's Physique</option>
-        <option value="wellness">Wellness</option>
-        <option value="bikini">Bikini</option>
-        <option value="figure">Figure</option>
-        <option value="fit_model">Fit Model</option>
-        <option value="wheelchair">Wheelchair</option>
-      </select>
-      
-      <!-- Campos condicionales (peso/estatura) -->
-      <div id="pesoContainer" style="display:none;">
-        <label for="peso">Peso (kg):</label>
-        <input type="number" id="peso" min="1" step="0.1">
+
+  <!-- Barra de Navegación Superior -->
+  <header class="main-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-axe"></span>
+        <div class="brand-text">
+          <span class="brand-title">VIKINGOS CLASSIC</span>
+          <span class="brand-subtitle">BOGOTÁ 2026</span>
+        </div>
       </div>
+      <nav class="nav-tabs">
+        <button type="button" class="nav-tab active" id="tabInscripcionBtn">
+          <span></span> Inscripción Oficial
+        </button>
+        <button type="button" class="nav-tab" id="tabClasificacionBtn">
+          <span></span> Panel de Jueces y Pesaje
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    
+    <!-- ========================================== -->
+    <!-- SECCIÓN 1: FORMULARIO DE INSCRIPCIÓN       -->
+    <!-- ========================================== -->
+    <section id="seccionInscripcion" class="content-section active-section">
       
-      <div id="estaturaContainer" style="display:none;">
-        <label for="estatura">Estatura (m):</label>
-        <input type="number" id="estatura" min="1" step="0.01">
+      <!-- Banner del Evento -->
+      <div class="event-banner">
+        <div class="banner-badge">INSCRIPCIONES ABIERTAS</div>
+        <h1 class="banner-title">VIKINGOS CLASSIC BOGOTA</h1>
+        <p class="banner-tagline">¡BIENVENID@ A ESTA COMPETENCIA ÉPICA!</p>
+        
+        <div class="event-info-grid">
+          <div class="info-card">
+            <span class="info-icon"></span>
+            <div>
+              <strong>Lugar del Evento</strong>
+              <p>Teatro Crisanto Luque (Calle 20 #9 - 45)</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <span class="info-icon"></span>
+            <div>
+              <strong>Registro y Pesaje</strong>
+              <p>17/10/2026 — 1:00 pm a 5:00 pm</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <span class="info-icon"></span>
+            <div>
+              <strong>Competencia y Finales</strong>
+              <p>18/10/2026 — 11:00 am</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acordeón de Términos y Condiciones -->
+        <details class="terms-accordion">
+          <summary class="terms-summary">
+            <span> Ver Términos, Reglamento y Orden de Salida</span>
+            <span class="accordion-arrow">▼</span>
+          </summary>
+          <div class="terms-content">
+            <div class="terms-grid">
+              <div>
+                <h4> Inscripción y Pagos</h4>
+                <ul>
+                  <li>Valor de inscripción: <strong>$200.000 COP</strong> (por categoría).</li>
+                  <li>El valor no es reembolsable ni transferible bajo ninguna circunstancia.</li>
+                  <li>Adjunta el comprobante legible (captura o PDF) en este formulario.</li>
+                </ul>
+              </div>
+              <div>
+                <h4> Orden de Salida Oficial</h4>
+                <ol>
+                  <li><strong>Presentación individual</strong> (poses libres).</li>
+                  <li><strong>Cuartos de giro y poses reglamentarias</strong> (comparaciones por los jueces).</li>
+                  <li><strong>Coreografía</strong> (categorías con música).</li>
+                  <li><strong>Premiación</strong> inmediata por categoría.</li>
+                </ol>
+              </div>
+              <div>
+                <h4> Reglamento y Normas</h4>
+                <ul>
+                  <li>Todos los atletas deben presentarse al pesaje con documento de identidad original.</li>
+                  <li>Tinte reglamentario obligatorio en zonas designadas del teatro.</li>
+                  <li>El atleta declara encontrarse en óptimas condiciones físicas y de salud para participar.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
       </div>
+
+      <!-- Formulario Oficial de Registro de Atleta -->
+      <div class="form-container">
+        <div class="form-header">
+          <h2>Formulario de Inscripción Oficial</h2>
+          <p>Diligencia todos los campos obligatorios (*) para reservar tu lugar en tarima.</p>
+        </div>
+
+        <form id="formInscripcionOficial" novalidate>
+          
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="regNombre">Nombre Completo <span class="required">*</span></label>
+              <input type="text" id="regNombre" placeholder="Ingresa tus nombres y apellidos" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="regCorreo">Correo Electrónico <span class="required">*</span></label>
+              <input type="email" id="regCorreo" placeholder="ejemplo@correo.com" required>
+            </div>
+          </div>
+
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="regCedula">Número de Cédula / Documento <span class="required">*</span></label>
+              <input type="text" id="regCedula" placeholder="C.C. o documento de identidad" required>
+            </div>
+
+            <div class="form-group">
+              <label for="regCelular">Número de Celular / WhatsApp <span class="required">*</span></label>
+              <input type="tel" id="regCelular" placeholder="Ej: 300 123 4567" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regCiudad">Ciudad / País <span class="required">*</span></label>
+            <input type="text" id="regCiudad" placeholder="Ej: Bogotá, Colombia" required>
+          </div>
+
+          <!-- Selección de Categoría (Radio Cards) -->
+          <div class="form-group">
+            <label class="section-label">Categoría en la que va a competir <span class="required">*</span></label>
+            <div class="options-grid" id="categoriaOptionsContainer">
+              
+              <label class="option-card">
+                <input type="radio" name="regCategoria" value="fit_model" required>
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Fit Model</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regCategoria" value="bikini">
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Bikini</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regCategoria" value="wellness">
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Wellness</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regCategoria" value="figure">
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Figure</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regCategoria" value="womans_physique">
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Woman's Physique</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regCategoria" value="classic_physique">
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Classic Physique</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regCategoria" value="mens_physique">
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Men's Physique</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regCategoria" value="bodybuilding">
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Bodybuilding</span>
+                </div>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Selección de División (Radio Cards) -->
+          <div class="form-group">
+            <label class="section-label">División en la que va a competir <span class="required">*</span></label>
+            <div class="options-grid divisions-grid" id="divisionOptionsContainer">
+              
+              <label class="option-card">
+                <input type="radio" name="regDivision" value="Prejuvenil" required>
+                <div class="card-content">
+                  <span class="card-title">Pre-juvenil</span>
+                  <span class="card-desc">Hasta 19 años</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regDivision" value="Juvenil">
+                <div class="card-content">
+                  <span class="card-title">Juvenil</span>
+                  <span class="card-desc">Hasta los 24 años</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regDivision" value="Semi-novatos">
+                <div class="card-content">
+                  <span class="card-title">Semi Novato</span>
+                  <span class="card-desc">1ra competencia</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regDivision" value="Novato">
+                <div class="card-content">
+                  <span class="card-title">Novato</span>
+                  <span class="card-desc">Máximo 3 años</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regDivision" value="Avanzado">
+                <div class="card-content">
+                  <span class="card-title">Avanzado</span>
+                  <span class="card-desc">Nivel abierto</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regDivision" value="Master">
+                <div class="card-content">
+                  <span class="card-title">Master</span>
+                  <span class="card-desc">Más de 40 años</span>
+                </div>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Subida de Comprobante de Pago -->
+          <div class="form-group">
+            <label class="section-label">Subir Comprobante de Pago (Scanner o foto legible) <span class="required">*</span></label>
+            <p class="field-hint">Sube una fotografía nítida o PDF del comprobante de transferencia bancaria (Máx. 10MB).</p>
+            
+            <div class="file-upload-box" id="comprobanteDropzone">
+              <input type="file" id="regComprobante" accept="image/*,.pdf" style="display: none;" required>
+              <div class="upload-icon"></div>
+              <p class="upload-text"><strong>Haz clic aquí para seleccionar archivo</strong> o arrástralo y suéltalo</p>
+              <span class="upload-subtext">Formatos permitidos: JPG, PNG, WEBP, PDF (Hasta 10MB)</span>
+              
+              <div id="comprobantePreviewContainer" class="preview-box" style="display: none;">
+                <img id="comprobanteImgPreview" src="" alt="Vista previa del comprobante" style="display: none;">
+                <div class="preview-details">
+                  <span id="comprobanteFileName" class="file-name"></span>
+                  <button type="button" id="removerComprobanteBtn" class="btn-remove-file">Quitar archivo</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subida de Música MP3 -->
+          <div class="form-group">
+            <label class="section-label">Música en formato MP3 <span class="optional">(Para las categorías que corresponda)</span></label>
+            <p class="field-hint">Si tu categoría incluye coreografía / rutina individual libre, sube aquí tu pista en formato MP3 (Máx. 10MB).</p>
+            
+            <div class="file-upload-box audio-upload-box" id="musicaDropzone">
+              <input type="file" id="regMusica" accept="audio/mp3,audio/mpeg" style="display: none;">
+              <div class="upload-icon"></div>
+              <p class="upload-text"><strong>Selecciona tu pista de audio MP3</strong> (Opcional)</p>
+              <span class="upload-subtext">Formato: MP3 (Duración máx. 60 a 90 segundos)</span>
+
+              <div id="musicaPreviewContainer" class="audio-preview-box" style="display: none;">
+                <span id="musicaFileName" class="file-name"></span>
+                <audio id="musicaAudioPreview" controls style="width: 100%; margin-top: 10px;"></audio>
+                <button type="button" id="removerMusicaBtn" class="btn-remove-file" style="margin-top: 8px;">Quitar audio</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aceptación de Términos -->
+          <div class="form-group terms-checkbox-group">
+            <label class="checkbox-container">
+              <input type="checkbox" id="regTerminos" required>
+              <span class="checkmark"></span>
+              <span class="checkbox-label">
+                Declaro que he leído, entiendo y acepto las condiciones de inscripción, orden de salida y exoneración de responsabilidad del <strong>Vikingos Classic Bogotá</strong>.
+              </span>
+            </label>
+          </div>
+
+          <!-- Botón de Envío -->
+          <div class="submit-container">
+            <button type="submit" id="btnSubmitInscripcion" class="btn-epic-submit">
+              <span></span> Completar Inscripción Vikinga
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Modal de Confirmación / Ticket de Atleta -->
+      <div id="registroModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+          <div class="modal-header">
+            <span class="modal-axe"></span>
+            <h3>¡INSCRIPCIÓN EXITOSA!</h3>
+            <p>Bienvenido a las filas de Vikingos Classic Bogotá</p>
+          </div>
+          
+          <div class="ticket-card" id="atletaTicket">
+            <div class="ticket-header">
+              <span class="ticket-badge">PASE OFICIAL DE ATLETA</span>
+              <span class="ticket-code" id="ticketRadicado">VK-2026-0000</span>
+            </div>
+            
+            <div class="ticket-body">
+              <div class="ticket-row">
+                <span class="t-label">Atleta:</span>
+                <span class="t-val" id="ticketNombre">-</span>
+              </div>
+              <div class="ticket-row">
+                <span class="t-label">Cédula:</span>
+                <span class="t-val" id="ticketCedula">-</span>
+              </div>
+              <div class="ticket-row">
+                <span class="t-label">Categoría:</span>
+                <span class="t-val highlight-val" id="ticketCategoria">-</span>
+              </div>
+              <div class="ticket-row">
+                <span class="t-label">División:</span>
+                <span class="t-val" id="ticketDivision">-</span>
+              </div>
+              <div class="ticket-row">
+                <span class="t-label">Ciudad / País:</span>
+                <span class="t-val" id="ticketCiudad">-</span>
+              </div>
+              <div class="ticket-row">
+                <span class="t-label">Comprobante de Pago:</span>
+                <span class="t-val badge-success">Adjuntado</span>
+              </div>
+            </div>
+
+            <div class="ticket-footer">
+              <p> <strong>Lugar:</strong> Teatro Crisanto Luque (Calle 20 #9 - 45)</p>
+              <p> <strong>Pesaje obligatorio:</strong> 17 de Octubre de 2026 (1:00 pm a 5:00 pm)</p>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-print" id="btnImprimirTicket"> Imprimir / Guardar Pase</button>
+            <button type="button" class="btn-close-modal" id="btnCerrarModal">Aceptar y Continuar</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- SECCIÓN 2: PANEL DE JUECES Y PESAJE        -->
+    <!-- ========================================== -->
+    <section id="seccionClasificacion" class="content-section" style="display: none;">
       
-      <!-- División y subdivisión -->
-      <div id="divisionContainer">
-        <label for="division">División:</label>
-        <select id="division" required>
-          <option value="Prejuvenil">Prejuvenil</option>
-          <option value="Juvenil">Juvenil</option>
-          <option value="Semi-novatos">Semi-novatos</option>
-          <option value="Novato" selected>Novato</option>
-          <option value="Avanzado">Avanzado</option>
-          <option value="Master">Master</option>
+      <div class="admin-header">
+        <h2>Panel de Jueces, Pesaje y Clasificación</h2>
+        <p>Administración oficial del campeonato: registro físico, pesaje, cálculo de subdivisiones y brackets de competencia.</p>
+      </div>
+
+      <!-- Dashboard Financiero y Asistencia -->
+      <div class="dashboard-stats" style="display: flex; gap: 20px; justify-content: space-between; margin-bottom: 30px; text-align: center;">
+        <div class="stat-card" style="flex: 1; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(229, 169, 59, 0.3);">
+          <h4 style="color: var(--text-muted); margin-bottom: 5px;">Total Atletas</h4>
+          <p id="statTotalAtletas" style="font-size: 28px; font-weight: bold; color: #fff;">0</p>
+        </div>
+        <div class="stat-card" style="flex: 1; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(229, 169, 59, 0.3);">
+          <h4 style="color: var(--text-muted); margin-bottom: 5px;">En Sitio (Pesados)</h4>
+          <p id="statEnSitio" style="font-size: 28px; font-weight: bold; color: var(--primary-light);">0</p>
+        </div>
+        <div class="stat-card" style="flex: 1; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(229, 169, 59, 0.3);">
+          <h4 style="color: var(--text-muted); margin-bottom: 5px;">Total Recaudado (Aprox)</h4>
+          <p id="statRecaudado" style="font-size: 28px; font-weight: bold; color: #4caf50;">$0</p>
+        </div>
+      </div>
+
+      <!-- Formulario de Pesaje / Edición de Competidor -->
+      <form id="competidorForm">
+        <h3 id="formTitleText" style="color: #ff3333; margin-bottom: 15px; font-size: 18px;">Registro y Pesaje en Sitio</h3>
+        
+        <label for="numero">Número Oficial:</label>
+        <input type="number" id="numero" required min="1" placeholder="Ej: 101">
+        
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" required placeholder="Nombre completo del competidor">
+        
+        <label for="cedula">Cédula:</label>
+        <input type="text" id="cedula" required placeholder="Documento de identidad">
+        
+        <label for="ciudad">Ciudad:</label>
+        <input type="text" id="ciudad" required placeholder="Ciudad de origen">
+        
+        <!-- Selector de categoría -->
+        <label for="categoria">Categoría:</label>
+        <select id="categoria" required>
+          <option value="">Seleccione...</option>
+          <option value="bodybuilding">Bodybuilding</option>
+          <option value="classic_physique">Classic Physique</option>
+          <option value="mens_physique">Men's Physique</option>
+          <option value="wellness">Wellness</option>
+          <option value="bikini">Bikini</option>
+          <option value="figure">Figure</option>
+          <option value="fit_model">Fit Model</option>
+          <option value="womans_physique">Woman's Physique</option>
+          <option value="wheelchair">Wheelchair</option>
         </select>
+        
+        <!-- Campos condicionales (peso/estatura) -->
+        <div id="pesoContainer" style="display:none;">
+          <label for="peso">Peso (kg):</label>
+          <input type="number" id="peso" min="1" step="0.1" placeholder="Ej: 78.5">
+        </div>
+        
+        <div id="estaturaContainer" style="display:none;">
+          <label for="estatura">Estatura (m):</label>
+          <input type="number" id="estatura" min="1" step="0.01" placeholder="Ej: 1.75">
+        </div>
+        
+        <!-- División y subdivisión -->
+        <div id="divisionContainer">
+          <label for="division">División:</label>
+          <select id="division" required>
+            <option value="Prejuvenil">Prejuvenil</option>
+            <option value="Juvenil">Juvenil</option>
+            <option value="Semi-novatos">Semi-novatos</option>
+            <option value="Novato" selected>Novato</option>
+            <option value="Avanzado">Avanzado</option>
+            <option value="Master">Master</option>
+          </select>
+        </div>
+        
+        <div style="display: flex; gap: 15px;">
+          <div style="flex: 1;">
+            <label for="estadoPago">Estado de Pago:</label>
+            <select id="estadoPago" required>
+              <option value="Pagado Online">Pagado Online</option>
+              <option value="Pagado Efectivo">Pagado Efectivo (En Puerta)</option>
+              <option value="Pendiente" selected>Pendiente</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label for="estadoAsistencia">Asistencia:</label>
+            <select id="estadoAsistencia" required>
+              <option value="Pendiente" selected>No ha llegado</option>
+              <option value="En fila">En fila (Puerta)</option>
+              <option value="Pesado">Pesado y Verificado</option>
+            </select>
+          </div>
+        </div>
+        
+        <div id="subdivisionContainer" style="display:none;">
+          <label for="subdivision">Subdivisión Calculada:</label>
+          <input type="text" id="subdivision" readonly placeholder="Se calcula automáticamente">
+        </div>
+        
+        <button type="submit" id="btnGuardarCompetidor">Guardar Competidor</button>
+        <button type="button" id="btnCancelarEdicion" style="display:none; background-color: #555; color: #fff; margin-top: 10px;">Cancelar Edición</button>
+        
+        <!-- Botones de acciones -->
+        <div class="data-buttons">
+          <button type="button" id="exportarJsonBtn">Exportar JSON</button>
+          <button type="button" id="exportarExcelBtn">Exportar Excel</button>
+          <button type="button" id="importarBtn">Importar</button>
+          <button type="button" id="clasificarBtn">Clasificar Automático</button>
+          <button type="button" id="clasificarTodosBtn" class="btn-purple">Clasificar Todos</button>
+          <input type="file" id="importarInput" accept=".json,.xlsx" style="display: none;">
+          <button type="button" id="borrarTodosBtn" class="btn-red">Borrar Todos</button>
+        </div>
+      </form>
+      
+      <!-- Botones de generación y exportación -->
+      <div class="action-buttons">
+        <button id="generarClasificacionBtn" class="btn-blue">Generar Clasificación Final</button>
+        <button id="exportarClasificacionBtn" class="btn-green">Exportar Clasificación</button>
       </div>
       
-      <div id="subdivisionContainer" style="display:none;">
-        <label for="subdivision">Subdivisión:</label>
-        <input type="text" id="subdivision" readonly>
+      <!-- Tabla de competidores -->
+      <h2>Lista de Competidores Registrados</h2>
+      <input type="text" id="buscador" placeholder=" Buscar competidor por nombre, cédula, categoría, ciudad...">
+      
+      <div class="table-container">
+        <table id="competidorTable">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Nombre</th>
+              <th>Cédula</th>
+              <th>Ciudad</th>
+              <th>Categoría</th>
+              <th>Peso</th>
+              <th>Estatura</th>
+              <th>División</th>
+              <th>Subdivisión</th>
+              <th>Pago</th>
+              <th>Estado</th>
+              <th>Comprobante</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
       
-      <button type="submit">Guardar Competidor</button>
-      
-      <!-- Botones de acciones -->
-      <div class="data-buttons">
-        <button type="button" id="exportarJsonBtn">Exportar JSON</button>
-        <button type="button" id="exportarExcelBtn">Exportar Excel</button>
-        <button type="button" id="importarBtn">Importar</button>
-        <button type="button" id="clasificarBtn">Clasificar Automático</button>
-        <button type="button" id="clasificarTodosBtn" class="btn-purple">Clasificar Todos</button>
-        <input type="file" id="importarInput" accept=".json,.xlsx" style="display: none;">
-        <button type="button" id="borrarTodosBtn" class="btn-red">Borrar Todos</button>
-        <input type="file" id="importarInput" accept=".json,.xlsx" style="display: none;">
+      <!-- Contenedor de clasificación final -->
+      <div id="clasificacionFinalContainer" style="display: none;">
+        <h2>Clasificación Final por Categorías</h2>
+        <div id="tablasClasificacion"></div>
       </div>
-    </form>
-    
-    <!-- Botones de generación y exportación -->
-    <div class="action-buttons">
-      <button id="generarClasificacionBtn" class="btn-blue">Generar Clasificación Final</button>
-      <button id="exportarClasificacionBtn" class="btn-green">Exportar Clasificación</button>
+
+    </section>
+
+  </main>
+
+  <!-- Modal para ver Comprobante de Pago desde el panel de jueces -->
+  <div id="verComprobanteModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>Comprobante de Pago</h3>
+        <p id="comprobanteModalSubtitle">Detalle del comprobante adjunto</p>
+      </div>
+      <div id="comprobanteModalBody" style="padding: 20px; text-align: center;">
+        <!-- Se insertará la imagen o enlace al PDF -->
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-close-modal" id="btnCerrarVerComprobante">Cerrar</button>
+      </div>
     </div>
-    
-    <!-- Tabla de competidores -->
-    <h2>Lista de Competidores</h2>
-    <input type="text" id="buscador" placeholder="Buscar competidor...">
-    <div class="table-container">
-      <table id="competidorTable">
-        <thead>
-          <tr>
-            <th>Número</th>
-            <th>Nombre</th>
-            <th>Cédula</th>
-            <th>Ciudad</th>
-            <th>Categoría</th>
-            <th>Peso</th>
-            <th>Estatura</th>
-            <th>División</th>
-            <th>Subdivisión</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    
-    <!-- Contenedor de clasificación final -->
-    <div id="clasificacionFinalContainer" style="display: none;">
-      <h2>Clasificación Final</h2>
-      <div id="tablasClasificacion"></div>
+  </div>
+
+  <footer class="main-footer">
+    <p>© 2026 VIKINGOS CLASSIC BOGOTÁ — Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- Modal de Login para Admin -->
+  <div id="adminLoginModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card" style="max-width: 400px; text-align: center;">
+      <div class="modal-header">
+        <h3>Acceso Restringido</h3>
+        <p>Por favor, ingrese la contraseña de administrador</p>
+      </div>
+      <div style="padding: 20px;">
+        <input type="password" id="adminPassword" placeholder="Contraseña" style="width: 100%; text-align: center; margin-bottom: 15px;">
+        <p id="adminLoginError" style="color: #ff3333; font-size: 13px; display: none; margin-bottom: 10px;">Contraseña incorrecta.</p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button type="button" class="btn-close-modal" id="btnCancelarAdminLogin" style="background-color: #555;">Cancelar</button>
+          <button type="button" class="btn-epic-submit" id="btnIngresarAdmin" style="padding: 10px 20px; font-size: 16px;">Ingresar</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <script src="script.js"></script>
 </body>
 </html>
