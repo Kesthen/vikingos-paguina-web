@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kesthen.github.io/vikingos-paguina-web/sitemap.xml
+Sitemap: Sitemap: https://vikingosclassic.netlify.app/sitemap.xml
