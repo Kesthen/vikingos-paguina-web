@@ -6,7 +6,7 @@
   <title>Vikingos Classic Bogotá | Inscripciones y Clasificación</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&family=Cinzel:wght@600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -119,30 +119,30 @@
           <div class="form-group-row">
             <div class="form-group">
               <label for="regNombre">Nombre Completo <span class="required">*</span></label>
-              <input type="text" id="regNombre" placeholder="Ingresa tus nombres y apellidos" required>
+              <input type="text" id="regNombre" autocomplete="name" placeholder="Ingresa tus nombres y apellidos" required>
             </div>
             
             <div class="form-group">
               <label for="regCorreo">Correo Electrónico <span class="required">*</span></label>
-              <input type="email" id="regCorreo" placeholder="ejemplo@correo.com" required>
+              <input type="email" id="regCorreo" autocomplete="email" inputmode="email" placeholder="ejemplo@correo.com" required>
             </div>
           </div>
 
           <div class="form-group-row">
             <div class="form-group">
               <label for="regCedula">Número de Cédula / Documento <span class="required">*</span></label>
-              <input type="text" id="regCedula" placeholder="C.C. o documento de identidad" required>
+              <input type="text" id="regCedula" inputmode="numeric" autocomplete="off" placeholder="C.C. o documento de identidad" required>
             </div>
 
             <div class="form-group">
               <label for="regCelular">Número de Celular / WhatsApp <span class="required">*</span></label>
-              <input type="tel" id="regCelular" placeholder="Ej: 300 123 4567" required>
+              <input type="tel" id="regCelular" autocomplete="tel" inputmode="tel" placeholder="Ej: 300 123 4567" required>
             </div>
           </div>
 
           <div class="form-group">
             <label for="regCiudad">Ciudad / País <span class="required">*</span></label>
-            <input type="text" id="regCiudad" placeholder="Ej: Bogotá, Colombia" required>
+            <input type="text" id="regCiudad" autocomplete="address-level2" placeholder="Ej: Bogotá, Colombia" required>
           </div>
 
           <!-- Selección de Categoría (Radio Cards) -->
@@ -281,7 +281,7 @@
             <div class="file-upload-box" id="comprobanteDropzone">
               <input type="file" id="regComprobante" accept="image/*,.pdf" style="display: none;" required>
               <div class="upload-icon"></div>
-              <p class="upload-text"><strong>Haz clic aquí para seleccionar archivo</strong> o arrástralo y suéltalo</p>
+              <p class="upload-text"><span class="solo-pc"><strong>Haz clic aquí para seleccionar archivo</strong> o arrástralo y suéltalo</span><span class="solo-movil"><strong>Toca aquí para subir la foto o el PDF</strong> del comprobante</span></p>
               <span class="upload-subtext">Formatos permitidos: JPG, PNG, WEBP, PDF (Hasta 10MB)</span>
               
               <div id="comprobantePreviewContainer" class="preview-box" style="display: none;">
@@ -395,162 +395,227 @@
     <!-- ========================================== -->
     <!-- SECCIÓN 2: PANEL DE JUECES Y PESAJE        -->
     <!-- ========================================== -->
-    <section id="seccionClasificacion" class="content-section" style="display: none;">
-      
-      <div class="admin-header">
-        <h2>Panel de Jueces, Pesaje y Clasificación</h2>
-        <p>Administración oficial del campeonato: registro físico, pesaje, cálculo de subdivisiones y brackets de competencia.</p>
-      </div>
+    <section id="seccionClasificacion" class="content-section panel-vk" style="display: none;">
 
-      <!-- Dashboard Financiero y Asistencia -->
-      <div class="dashboard-stats" style="display: flex; gap: 20px; justify-content: space-between; margin-bottom: 30px; text-align: center;">
-        <div class="stat-card" style="flex: 1; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(229, 169, 59, 0.3);">
-          <h4 style="color: var(--text-muted); margin-bottom: 5px;">Total Atletas</h4>
-          <p id="statTotalAtletas" style="font-size: 28px; font-weight: bold; color: #fff;">0</p>
-        </div>
-        <div class="stat-card" style="flex: 1; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(229, 169, 59, 0.3);">
-          <h4 style="color: var(--text-muted); margin-bottom: 5px;">En Sitio (Pesados)</h4>
-          <p id="statEnSitio" style="font-size: 28px; font-weight: bold; color: var(--primary-light);">0</p>
-        </div>
-        <div class="stat-card" style="flex: 1; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(229, 169, 59, 0.3);">
-          <h4 style="color: var(--text-muted); margin-bottom: 5px;">Total Recaudado (Aprox)</h4>
-          <p id="statRecaudado" style="font-size: 28px; font-weight: bold; color: #4caf50;">$0</p>
+      <!-- Barra superior del panel -->
+      <div class="pv-header">
+        <img src="logo-vikingos.jpg" alt="Vikingos Classic" class="pv-logo">
+        <h1>Clasifi<span>cación</span></h1>
+        <div class="pv-stats">
+          <div class="pv-stat">Competidores <strong id="statTotalAtletas">0</strong></div>
+          <div class="pv-stat">En sitio <strong id="statEnSitio">0</strong></div>
+          <div class="pv-stat">Recaudado <strong id="statRecaudado" class="pv-verde">$0</strong></div>
+          <button type="button" class="pv-stat pv-stat-online" id="statCardOnlinePendientes" title="Ver inscritos online con datos pendientes">
+            <span class="live-dot"></span> Online por completar <strong id="statOnlinePendientes">0</strong>
+          </button>
         </div>
       </div>
 
-      <!-- Formulario de Pesaje / Edición de Competidor -->
-      <form id="competidorForm">
-        <h3 id="formTitleText" style="color: #ff3333; margin-bottom: 15px; font-size: 18px;">Registro y Pesaje en Sitio</h3>
-        
-        <label for="numero">Número Oficial:</label>
-        <input type="number" id="numero" required min="1" placeholder="Ej: 101">
-        
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" required placeholder="Nombre completo del competidor">
-        
-        <label for="cedula">Cédula:</label>
-        <input type="text" id="cedula" required placeholder="Documento de identidad">
-        
-        <label for="ciudad">Ciudad:</label>
-        <input type="text" id="ciudad" required placeholder="Ciudad de origen">
-        
-        <!-- Selector de categoría -->
-        <label for="categoria">Categoría:</label>
-        <select id="categoria" required>
-          <option value="">Seleccione...</option>
-          <option value="bodybuilding">Bodybuilding</option>
-          <option value="classic_physique">Classic Physique</option>
-          <option value="mens_physique">Men's Physique</option>
-          <option value="wellness">Wellness</option>
-          <option value="bikini">Bikini</option>
-          <option value="figure">Figure</option>
-          <option value="fit_model">Fit Model</option>
-          <option value="womans_physique">Woman's Physique</option>
-          <option value="wheelchair">Wheelchair</option>
-        </select>
-        
-        <!-- Campos condicionales (peso/estatura) -->
-        <div id="pesoContainer" style="display:none;">
-          <label for="peso">Peso (kg):</label>
-          <input type="number" id="peso" min="1" step="0.1" placeholder="Ej: 78.5">
-        </div>
-        
-        <div id="estaturaContainer" style="display:none;">
-          <label for="estatura">Estatura (m):</label>
-          <input type="number" id="estatura" min="1" step="0.01" placeholder="Ej: 1.75">
-        </div>
-        
-        <!-- División y subdivisión -->
-        <div id="divisionContainer">
-          <label for="division">División:</label>
-          <select id="division" required>
-            <option value="Prejuvenil">Prejuvenil</option>
-            <option value="Juvenil">Juvenil</option>
-            <option value="Semi-novatos">Semi-novatos</option>
-            <option value="Novato" selected>Novato</option>
-            <option value="Avanzado">Avanzado</option>
-            <option value="Master">Master</option>
-          </select>
-        </div>
-        
-        <div style="display: flex; gap: 15px;">
-          <div style="flex: 1;">
-            <label for="estadoPago">Estado de Pago:</label>
-            <select id="estadoPago" required>
-              <option value="Pagado Online">Pagado Online</option>
-              <option value="Pagado Efectivo">Pagado Efectivo (En Puerta)</option>
-              <option value="Pendiente" selected>Pendiente</option>
-            </select>
+      <div class="pv-layout">
+        <!-- SIDEBAR: FORMULARIO DE PESAJE -->
+        <aside class="pv-sidebar" id="pvSidebar">
+          <div class="pv-sheet-bar">
+            <span>Registro y pesaje</span>
+            <button type="button" class="pv-sheet-cerrar" id="btnCerrarFormMovil" aria-label="Cerrar formulario">✕</button>
           </div>
-          <div style="flex: 1;">
-            <label for="estadoAsistencia">Asistencia:</label>
-            <select id="estadoAsistencia" required>
-              <option value="Pendiente" selected>No ha llegado</option>
-              <option value="En fila">En fila (Puerta)</option>
-              <option value="Pesado">Pesado y Verificado</option>
+          <form id="competidorForm" novalidate>
+            <div class="pv-section-title" id="formTitleText">Datos del competidor</div>
+
+            <div class="pv-edit-indicator" id="editIndicator">
+              <span id="editIndicatorText">Editando competidor</span>
+            </div>
+
+            <label for="numero">Número</label>
+            <input type="number" id="numero" min="1" inputmode="numeric" placeholder="Ej: 101">
+
+            <label for="nombre">Nombre completo</label>
+            <input type="text" id="nombre" placeholder="Nombre del atleta">
+
+            <label for="cedula">Cédula</label>
+            <input type="text" id="cedula" placeholder="Documento de identidad">
+
+            <label for="ciudad">Ciudad</label>
+            <input type="text" id="ciudad" placeholder="Ciudad de procedencia">
+
+            <div class="pv-section-title">Categoría y clasificación</div>
+
+            <label for="categoria">Categoría</label>
+            <select id="categoria">
+              <option value="">Seleccione...</option>
+              <option value="bodybuilding">Bodybuilding</option>
+              <option value="classic_physique">Classic Physique</option>
+              <option value="mens_physique">Men's Physique</option>
+              <option value="wellness">Wellness</option>
+              <option value="bikini">Bikini</option>
+              <option value="figure">Figure</option>
+              <option value="fit_model">Fit Model</option>
+              <option value="womans_physique">Woman's Physique</option>
+              <option value="wheelchair">Wheelchair</option>
             </select>
+
+            <div class="pv-conditional" id="pesoContainer">
+              <label for="peso">Peso (kg)</label>
+              <input type="number" id="peso" min="1" step="0.1" inputmode="decimal" placeholder="Ej: 85.5">
+            </div>
+
+            <div class="pv-conditional" id="estaturaContainer">
+              <label for="estatura">Estatura (m)</label>
+              <input type="number" id="estatura" min="1" step="0.01" inputmode="decimal" placeholder="Ej: 1.75">
+            </div>
+
+            <label for="division">División</label>
+            <select id="division">
+              <option value="Prejuvenil">Prejuvenil</option>
+              <option value="Juvenil">Juvenil</option>
+              <option value="Semi-novatos">Semi-novatos</option>
+              <option value="Novato" selected>Novato</option>
+              <option value="Avanzado">Avanzado</option>
+              <option value="Master">Master</option>
+            </select>
+
+            <div class="pv-conditional" id="subdivisionContainer">
+              <label for="subdivision">Subdivisión</label>
+              <input type="text" id="subdivision" readonly placeholder="Se calcula automáticamente">
+            </div>
+
+            <div class="pv-section-title">Pago y asistencia</div>
+            <div class="pv-row2">
+              <div>
+                <label for="estadoPago">Pago</label>
+                <select id="estadoPago">
+                  <option value="Pagado Online">Pagado Online</option>
+                  <option value="Pagado Efectivo">Pagado Efectivo</option>
+                  <option value="Pendiente" selected>Pendiente</option>
+                </select>
+              </div>
+              <div>
+                <label for="estadoAsistencia">Asistencia</label>
+                <select id="estadoAsistencia">
+                  <option value="Pendiente" selected>No ha llegado</option>
+                  <option value="En fila">En fila</option>
+                  <option value="Pesado">Pesado</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btnGuardarCompetidor">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span id="btnGuardarTexto">Guardar Competidor</span>
+            </button>
+            <button type="button" class="btn btn-ghost pv-full" id="btnCancelarEdicion" style="display:none;">Cancelar edición</button>
+
+            <div class="pv-section-title" id="pvAcciones" style="margin-top:24px;">Acciones</div>
+            <div class="btn-grid">
+              <button type="button" class="btn btn-orange btn-sm" id="exportarJsonBtn">↓ JSON</button>
+              <button type="button" class="btn btn-green btn-sm" id="exportarExcelBtn">↓ Excel</button>
+              <button type="button" class="btn btn-blue btn-sm" id="importarBtn">↑ Importar</button>
+              <button type="button" class="btn btn-purple btn-sm" id="clasificarBtn">Calcular este</button>
+              <button type="button" class="btn btn-purple btn-sm btn-span2" id="clasificarTodosBtn">Clasificar todos</button>
+              <button type="button" class="btn btn-red-outline btn-sm btn-span2" id="borrarTodosBtn">✕ Borrar todos</button>
+            </div>
+            <input type="file" id="importarInput" accept=".json,.xlsx" style="display:none">
+          </form>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="pv-main">
+          <div class="pv-tabs">
+            <div class="pv-tab active" data-tab="competidores" id="listaCompetidoresTitulo">Lista de Competidores</div>
+            <div class="pv-tab" data-tab="clasificacion">Clasificación Final</div>
+          </div>
+
+          <!-- TAB COMPETIDORES -->
+          <div class="pv-tab-content active" id="pvtab-competidores">
+            <div class="pv-mobile-toolbar">
+              <button type="button" class="btn btn-primary" id="btnNuevoMovil">+ Nuevo competidor</button>
+              <button type="button" class="btn btn-ghost" id="btnAccionesMovil">⚙ Acciones</button>
+            </div>
+            <div class="chips-filtro" aria-label="Filtrar por origen y estado de datos">
+              <button type="button" class="chip-filtro active" data-filtro="todos">Todos <span class="chip-count">0</span></button>
+              <button type="button" class="chip-filtro chip-destacado" data-filtro="online_pendientes">Online por completar <span class="chip-count">0</span></button>
+              <button type="button" class="chip-filtro" data-filtro="online">Inscritos online <span class="chip-count">0</span></button>
+              <button type="button" class="chip-filtro" data-filtro="sitio">En sitio <span class="chip-count">0</span></button>
+              <button type="button" class="chip-filtro" data-filtro="completos">Completos <span class="chip-count">0</span></button>
+              <button type="button" class="chip-filtro" data-filtro="incompletos">Incompletos <span class="chip-count">0</span></button>
+            </div>
+
+            <div class="pv-table-controls">
+              <div class="pv-search-wrap">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-width="2" d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" id="buscador" placeholder="Buscar por nombre, número, ciudad, radicado...">
+              </div>
+              <select id="filtroCategoria">
+                <option value="">Todas las categorías</option>
+                <option value="bodybuilding">Bodybuilding</option>
+                <option value="classic_physique">Classic Physique</option>
+                <option value="mens_physique">Men's Physique</option>
+                <option value="wellness">Wellness</option>
+                <option value="bikini">Bikini</option>
+                <option value="figure">Figure</option>
+                <option value="fit_model">Fit Model</option>
+                <option value="womans_physique">Woman's Physique</option>
+                <option value="wheelchair">Wheelchair</option>
+              </select>
+            </div>
+
+            <div class="pv-table-wrap">
+              <table id="competidorTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Origen</th>
+                    <th>Datos</th>
+                    <th>Cédula</th>
+                    <th>Ciudad</th>
+                    <th>Categoría</th>
+                    <th>Peso</th>
+                    <th>Estatura</th>
+                    <th>División</th>
+                    <th>Subdivisión</th>
+                    <th>Pago</th>
+                    <th>Asistencia</th>
+                    <th>Comprobante</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="pv-empty" id="sinResultados" style="display:none;">
+              <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-width="1.5" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path stroke-linecap="round" stroke-width="1.5" d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+              <p>No hay competidores que coincidan con este filtro</p>
+            </div>
+          </div>
+
+          <!-- TAB CLASIFICACIÓN -->
+          <div class="pv-tab-content" id="pvtab-clasificacion">
+            <div class="pv-clasif-header">
+              <h2>Clasificación Final</h2>
+              <div class="pv-clasif-botones">
+                <button type="button" class="btn btn-blue" id="generarClasificacionBtn">Generar Clasificación</button>
+                <button type="button" class="btn btn-green" id="exportarClasificacionBtn">↓ Exportar Excel</button>
+              </div>
+            </div>
+
+            <div id="clasificacionFinalContainer">
+              <div id="avisoPendientesClasif" class="aviso-pendientes" style="display:none;"></div>
+              <div id="tablasClasificacion">
+                <div class="pv-empty">
+                  <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                  <p>Presiona "Generar Clasificación" para comenzar</p>
+                </div>
+              </div>
+
+              <div class="fusion-mode-bar" id="fusionBar">
+                <p id="fusionMsg">Haz clic en las tablas que quieres fusionar con la seleccionada</p>
+                <button type="button" class="btn btn-green btn-sm" id="fusionConfirmarBtn" onclick="confirmarFusion()">✓ Fusionar seleccionadas</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="cancelarFusion()">✕ Cancelar</button>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div id="subdivisionContainer" style="display:none;">
-          <label for="subdivision">Subdivisión Calculada:</label>
-          <input type="text" id="subdivision" readonly placeholder="Se calcula automáticamente">
-        </div>
-        
-        <button type="submit" id="btnGuardarCompetidor">Guardar Competidor</button>
-        <button type="button" id="btnCancelarEdicion" style="display:none; background-color: #555; color: #fff; margin-top: 10px;">Cancelar Edición</button>
-        
-        <!-- Botones de acciones -->
-        <div class="data-buttons">
-          <button type="button" id="exportarJsonBtn">Exportar JSON</button>
-          <button type="button" id="exportarExcelBtn">Exportar Excel</button>
-          <button type="button" id="importarBtn">Importar</button>
-          <button type="button" id="clasificarBtn">Clasificar Automático</button>
-          <button type="button" id="clasificarTodosBtn" class="btn-purple">Clasificar Todos</button>
-          <input type="file" id="importarInput" accept=".json,.xlsx" style="display: none;">
-          <button type="button" id="borrarTodosBtn" class="btn-red">Borrar Todos</button>
-        </div>
-      </form>
-      
-      <!-- Botones de generación y exportación -->
-      <div class="action-buttons">
-        <button id="generarClasificacionBtn" class="btn-blue">Generar Clasificación Final</button>
-        <button id="exportarClasificacionBtn" class="btn-green">Exportar Clasificación</button>
       </div>
-      
-      <!-- Tabla de competidores -->
-      <h2>Lista de Competidores Registrados</h2>
-      <input type="text" id="buscador" placeholder=" Buscar competidor por nombre, cédula, categoría, ciudad...">
-      
-      <div class="table-container">
-        <table id="competidorTable">
-          <thead>
-            <tr>
-              <th>Número</th>
-              <th>Nombre</th>
-              <th>Cédula</th>
-              <th>Ciudad</th>
-              <th>Categoría</th>
-              <th>Peso</th>
-              <th>Estatura</th>
-              <th>División</th>
-              <th>Subdivisión</th>
-              <th>Pago</th>
-              <th>Estado</th>
-              <th>Comprobante</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      
-      <!-- Contenedor de clasificación final -->
-      <div id="clasificacionFinalContainer" style="display: none;">
-        <h2>Clasificación Final por Categorías</h2>
-        <div id="tablasClasificacion"></div>
-      </div>
-
     </section>
 
   </main>
@@ -570,6 +635,8 @@
       </div>
     </div>
   </div>
+
+  <div class="toast" id="toast"></div>
 
   <footer class="main-footer">
     <p>© 2026 VIKINGOS CLASSIC BOGOTÁ — Todos los derechos reservados.</p>
