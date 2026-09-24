@@ -90,15 +90,61 @@ let editId = null;
 
 // Variables de estado para archivos del formulario de inscripción
 let comprobanteArchivo = {
-  dataUrl: null,
+  dataUrl: null,   // vista previa
+  blob: null,      // archivo que se sube a la nube
   nombre: '',
   tipo: ''
 };
 
 let musicaArchivo = {
   nombre: '',
-  url: null
+  url: null,
+  file: null
 };
+
+// ─── ARCHIVOS EN SUPABASE STORAGE ─────────────────────────
+const BUCKET_ARCHIVOS = 'inscripciones';
+
+function limpiarNombreArchivo(txt) {
+  return String(txt || 'archivo')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9._-]+/g, '_')
+    .replace(/_+/g, '_')
+    .slice(0, 60);
+}
+
+// Sube un archivo al bucket y devuelve { ok, url } o { ok:false, error }
+async function subirArchivo(carpeta, nombreBase, blob, contentType) {
+  if (!supabaseClient) return { ok: false, error: 'No se pudo conectar con la base de datos.' };
+  const ruta = `${limpiarNombreArchivo(carpeta)}/${Date.now()}-${limpiarNombreArchivo(nombreBase)}`;
+  try {
+    const { error } = await supabaseClient.storage.from(BUCKET_ARCHIVOS)
+      .upload(ruta, blob, { contentType, cacheControl: '3600', upsert: false });
+    if (error) throw error;
+    const { data } = supabaseClient.storage.from(BUCKET_ARCHIVOS).getPublicUrl(ruta);
+    return { ok: true, url: data.publicUrl };
+  } catch (err) {
+    console.error('Error subiendo archivo:', err);
+    const msg = err.message || String(err);
+    let texto = msg;
+    if (/bucket not found/i.test(msg)) texto = `No existe el espacio de archivos "${BUCKET_ARCHIVOS}" en Supabase Storage.`;
+    else if (/row-level security|unauthorized|403/i.test(msg)) texto = 'Supabase Storage no da permiso para subir archivos (falta la política de subida).';
+    else if (/mime|content type|not supported/i.test(msg)) texto = 'Ese tipo de archivo no está permitido.';
+    else if (/size|too large|exceed/i.test(msg)) texto = 'El archivo es demasiado grande.';
+    return { ok: false, error: texto };
+  }
+}
+
+function dataUrlABlob(dataUrl) {
+  const [cab, datos] = dataUrl.split(',');
+  const tipo = (cab.match(/data:([^;]+)/) || [])[1] || 'application/octet-stream';
+  const bin = atob(datos);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: tipo });
+}
+
+function esUrlArchivo(v) { return typeof v === 'string' && /^(https?:|data:)/.test(v) && !/placeholder$/.test(v); }
 
 document.addEventListener('DOMContentLoaded', () => {
   // Inicializar Supabase DENTRO del DOMContentLoaded para asegurar que el SDK esté cargado
@@ -251,7 +297,7 @@ function setupInscripcionForm() {
 
   removerComprobanteBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    comprobanteArchivo = { dataUrl: null, nombre: '', tipo: '' };
+    comprobanteArchivo = { dataUrl: null, blob: null, nombre: '', tipo: '' };
     regComprobante.value = '';
     previewContainer.style.display = 'none';
     imgPreview.src = '';
@@ -272,14 +318,18 @@ function setupInscripcionForm() {
 
     if (file.type.startsWith('image/')) {
       // Las fotos del celular pesan varios MB: se reducen antes de guardarlas
+      comprobanteArchivo.blob = null;
       comprimirImagen(file).then(dataUrl => {
         comprobanteArchivo.dataUrl = dataUrl;
+        comprobanteArchivo.blob = dataUrlABlob(dataUrl);
+        comprobanteArchivo.tipo = 'image/jpeg';
         imgPreview.src = dataUrl;
         imgPreview.style.display = 'block';
         const kb = Math.round((dataUrl.length * 3 / 4) / 1024);
         fileNameSpan.textContent = `Archivo: ${file.name} (${kb} KB)`;
       }).catch(() => {
         const reader = new FileReader();
+        comprobanteArchivo.blob = file;
         reader.onload = (ev) => {
           comprobanteArchivo.dataUrl = ev.target.result;
           imgPreview.src = ev.target.result;
@@ -290,7 +340,9 @@ function setupInscripcionForm() {
     } else {
       // PDF o documento
       imgPreview.style.display = 'none';
-      comprobanteArchivo.dataUrl = 'data:application/pdf;base64,placeholder';
+      comprobanteArchivo.dataUrl = null;
+      comprobanteArchivo.blob = file;
+      comprobanteArchivo.tipo = file.type || 'application/pdf';
     }
   }
 
@@ -316,6 +368,7 @@ function setupInscripcionForm() {
         return;
       }
       musicaArchivo.nombre = file.name;
+      musicaArchivo.file = file;
       musicaArchivo.url = URL.createObjectURL(file);
       musicaFileName.textContent = `Pista MP3: ${file.name}`;
       musicaAudioPreview.src = musicaArchivo.url;
@@ -325,7 +378,7 @@ function setupInscripcionForm() {
 
   removerMusicaBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    musicaArchivo = { nombre: '', url: null };
+    musicaArchivo = { nombre: '', url: null, file: null };
     regMusica.value = '';
     musicaAudioPreview.src = '';
     musicaPreviewContainer.style.display = 'none';
@@ -397,9 +450,10 @@ function setupInscripcionForm() {
       subdivision: indexExistente !== -1 ? competidores[indexExistente].subdivision : 'Pendiente de pesaje',
       pago: 'Pagado Online',
       asistencia: 'Pendiente',
-      comprobanteUrl: comprobanteArchivo.dataUrl || '',
+      comprobanteUrl: '',
       comprobanteNombre: comprobanteArchivo.nombre || '',
       musicaNombre: musicaArchivo.nombre || '',
+      musicaUrl: '',
       radicado: radicadoCode,
       fechaInscripcion: new Date().toLocaleDateString('es-CO')
     };
@@ -408,16 +462,39 @@ function setupInscripcionForm() {
       ? { ...competidores[indexExistente], ...nuevoCompetidor }
       : nuevoCompetidor;
 
-    if (comprobanteArchivo.tipo.startsWith('image/') && !comprobanteArchivo.dataUrl) {
+    if (!comprobanteArchivo.blob) {
       alert("El comprobante todavía se está procesando. Espere un segundo e intente de nuevo.");
       return;
     }
 
     // Enviar a la base de datos y esperar la respuesta antes de confirmar
     const textoOriginal = btnEnviar ? btnEnviar.innerHTML : '';
-    if (btnEnviar) { btnEnviar.disabled = true; btnEnviar.textContent = 'Enviando inscripción...'; }
+    const estadoBoton = (txt) => { if (btnEnviar) { btnEnviar.disabled = true; btnEnviar.textContent = txt; } };
+    const restaurarBoton = () => { if (btnEnviar) { btnEnviar.disabled = false; btnEnviar.innerHTML = textoOriginal; } };
+    const fallo = (msg) => {
+      restaurarBoton();
+      alert(`No se pudo completar la inscripción.\n\n${msg}\n\nRevise su conexión e intente de nuevo. Si el problema continúa, comuníquese con la organización.`);
+    };
+
+    // 1) Subir el comprobante
+    estadoBoton('Subiendo comprobante...');
+    const extComp = comprobanteArchivo.tipo === 'application/pdf' ? 'pdf' : (comprobanteArchivo.tipo.split('/')[1] || 'jpg');
+    const subidaComp = await subirArchivo(cedula, `comprobante.${extComp}`, comprobanteArchivo.blob, comprobanteArchivo.tipo || 'image/jpeg');
+    if (!subidaComp.ok) { fallo(`Comprobante: ${subidaComp.error}`); return; }
+    registro.comprobanteUrl = subidaComp.url;
+
+    // 2) Subir la música (opcional)
+    if (musicaArchivo.file) {
+      estadoBoton('Subiendo música...');
+      const subidaMusica = await subirArchivo(cedula, musicaArchivo.nombre || 'musica.mp3', musicaArchivo.file, musicaArchivo.file.type || 'audio/mpeg');
+      if (!subidaMusica.ok) { fallo(`Música: ${subidaMusica.error}`); return; }
+      registro.musicaUrl = subidaMusica.url;
+    }
+
+    // 3) Guardar la inscripción
+    estadoBoton('Enviando inscripción...');
     const resultado = await syncCompetidorToSupabase(registro);
-    if (btnEnviar) { btnEnviar.disabled = false; btnEnviar.innerHTML = textoOriginal; }
+    restaurarBoton();
 
     if (!resultado.ok) {
       alert(`No se pudo completar la inscripción.\n\n${resultado.error}\n\nRevise su conexión e intente de nuevo. Si el problema continúa, comuníquese con la organización.`);
@@ -433,11 +510,11 @@ function setupInscripcionForm() {
 
     // Limpiar formulario
     formInscripcion.reset();
-    comprobanteArchivo = { dataUrl: null, nombre: '', tipo: '' };
+    comprobanteArchivo = { dataUrl: null, blob: null, nombre: '', tipo: '' };
     previewContainer.style.display = 'none';
     imgPreview.src = '';
     fileNameSpan.textContent = '';
-    musicaArchivo = { nombre: '', url: null };
+    musicaArchivo = { nombre: '', url: null, file: null };
     musicaPreviewContainer.style.display = 'none';
     musicaAudioPreview.src = '';
     musicaFileName.textContent = '';
@@ -651,6 +728,7 @@ function setupEventListeners() {
   if (btnCerrarVerComprobante) {
     btnCerrarVerComprobante.addEventListener('click', () => {
       document.getElementById('verComprobanteModal').style.display = 'none';
+      document.querySelectorAll('#comprobanteModalBody audio').forEach(a => a.pause());
     });
   }
 }
@@ -961,6 +1039,9 @@ function addRowToTable(data, index, conteo) {
   if (online && !completo) row.classList.add('fila-online-pendiente');
 
   let comprobanteHtml = '<span class="dato-vacio">—</span>';
+  const musicaHtml = esUrlArchivo(data.musicaUrl)
+    ? `<button type="button" class="btn btn-sm btn-ghost" onclick="verMusica(${index})">▶ Escuchar</button>`
+    : (data.musicaNombre ? '<span class="dato-vacio" title="Se inscribió antes de que la música se guardara en la nube">Sin archivo</span>' : '<span class="dato-vacio">—</span>');
   if (data.comprobanteUrl || data.comprobanteNombre) {
     comprobanteHtml = `<button type="button" class="btn btn-sm btn-ghost" onclick="verComprobante(${index})">Ver</button>`;
   }
@@ -999,6 +1080,7 @@ function addRowToTable(data, index, conteo) {
     <td class="td-small c-campo" data-label="Pago" style="font-weight:600; ${pagoClass}">${escapeHtml(data.pago || 'Pendiente')}</td>
     <td class="td-small c-campo" data-label="Asistencia" style="font-weight:600; ${asistenciaClass}">${escapeHtml(data.asistencia || 'Pendiente')}</td>
     <td class="c-campo" data-label="Comprobante">${comprobanteHtml}</td>
+    <td class="c-campo" data-label="Música">${musicaHtml}</td>
     <td class="c-acciones">
       <div class="td-actions">
         <button type="button" class="btn btn-sm ${completo ? 'btn-yellow' : 'btn-completar'}" onclick="editCompetidor(${index})">${completo ? 'Editar' : 'Completar'}</button>
@@ -1075,19 +1157,42 @@ function verComprobante(index) {
 
   modalSubtitle.textContent = `Atleta: ${comp.nombre} (C.C. ${comp.cedula})`;
 
-  if (comp.comprobanteUrl && String(comp.comprobanteUrl).startsWith('data:image')) {
+  const url = esUrlArchivo(comp.comprobanteUrl) ? comp.comprobanteUrl : '';
+  const esPdf = /\.pdf($|\?)/i.test(url) || /\.pdf$/i.test(comp.comprobanteNombre || '');
+  const nombreArchivo = escapeHtml(comp.comprobanteNombre || 'Comprobante');
+
+  if (url && !esPdf) {
     modalBody.innerHTML = `
-      <img src="${comp.comprobanteUrl}" alt="Comprobante" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid #444;">
-      <p style="margin-top: 10px; color: #aaa; font-size: 13px;">${escapeHtml(comp.comprobanteNombre || 'Imagen de comprobante')}</p>
+      <img src="${escapeHtml(url)}" alt="Comprobante" style="max-width: 100%; max-height: 60vh; border-radius: 8px; border: 1px solid #444;">
+      <p style="margin-top: 10px; color: #aaa; font-size: 13px;">${nombreArchivo}</p>
+      ${url.startsWith('http') ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="btn-ver-comprobante" style="display:inline-block;margin-top:8px;text-decoration:none;">Abrir / descargar</a>` : ''}
+    `;
+  } else if (url && esPdf) {
+    modalBody.innerHTML = `
+      <iframe src="${escapeHtml(url)}" title="Comprobante PDF" style="width:100%;height:60vh;border:1px solid #444;border-radius:8px;background:#fff;"></iframe>
+      <a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="btn-ver-comprobante" style="display:inline-block;margin-top:10px;text-decoration:none;">Abrir PDF en otra pestaña</a>
     `;
   } else {
     modalBody.innerHTML = `
-      <p style="color: #f5b027; font-weight: bold;">${escapeHtml(comp.comprobanteNombre || 'Comprobante en documento / PDF')}</p>
-      <p style="color: #aaa; font-size: 13px; margin-top: 6px;">Comprobante registrado.</p>
+      <p style="color: #f5b027; font-weight: bold;">${nombreArchivo}</p>
+      <p style="color: #aaa; font-size: 13px; margin-top: 6px;">Este archivo se registró antes de que los comprobantes se guardaran en la nube, así que solo quedó el nombre.</p>
     `;
   }
 
   modal.style.display = 'flex';
+}
+
+function verMusica(index) {
+  const comp = getCompetidores()[index];
+  if (!comp || !esUrlArchivo(comp.musicaUrl)) return;
+  const url = escapeHtml(comp.musicaUrl);
+  document.getElementById('comprobanteModalSubtitle').textContent = `Música de ${comp.nombre} (#${esVacio(comp.numero) ? '—' : comp.numero})`;
+  document.getElementById('comprobanteModalBody').innerHTML = `
+    <p style="color:#f5b027;font-weight:600;margin-bottom:12px;word-break:break-word;">${escapeHtml(comp.musicaNombre || 'Pista MP3')}</p>
+    <audio controls src="${url}" style="width:100%;"></audio>
+    <a href="${url}" target="_blank" rel="noopener" download class="btn-ver-comprobante" style="display:inline-block;margin-top:12px;text-decoration:none;">Descargar MP3</a>
+  `;
+  document.getElementById('verComprobanteModal').style.display = 'flex';
 }
 
 function editCompetidor(index) {
@@ -1197,7 +1302,10 @@ function exportarExcel() {
       "Subdivisión": comp.subdivision,
       "Pago": comp.pago || '',
       "Asistencia": comp.asistencia || '',
-      "Comprobante": comp.comprobanteNombre || 'No adjunto'
+      "Comprobante": comp.comprobanteNombre || 'No adjunto',
+      "Link comprobante": (esUrlArchivo(comp.comprobanteUrl) && String(comp.comprobanteUrl).startsWith('http')) ? comp.comprobanteUrl : '',
+      "Música": comp.musicaNombre || '',
+      "Link música": esUrlArchivo(comp.musicaUrl) ? comp.musicaUrl : ''
     };
   });
 
@@ -1871,6 +1979,7 @@ function exportarClasificacionFinal() {
 window.editCompetidor = editCompetidor;
 window.deleteCompetidor = deleteCompetidor;
 window.verComprobante = verComprobante;
+window.verMusica = verMusica;
 window.togglePesaje = togglePesaje;
 window.toggleDividir = toggleDividir;
 window.aplicarDivision = aplicarDivision;
