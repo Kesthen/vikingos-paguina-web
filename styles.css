@@ -1207,6 +1207,13 @@ body.modo-panel .main-footer { display: none; }
 }
 .panel-vk .pv-stat-online strong { color: var(--amarillo); }
 .panel-vk .pv-stat-online:hover { background: rgba(255, 214, 0, 0.08); transform: translateY(-1px); }
+.panel-vk .pv-stat-nube { cursor: pointer; transition: all 0.18s; }
+.panel-vk .pv-stat-nube:hover { color: var(--blanco); border-color: var(--gris-claro); }
+.panel-vk .nube-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gris); }
+.panel-vk .pv-stat-nube.nube-ok .nube-dot { background: var(--verde); box-shadow: 0 0 8px rgba(0, 200, 83, 0.7); }
+.panel-vk .pv-stat-nube.nube-error { border-color: rgba(230, 0, 0, 0.6); color: #ff6666; }
+.panel-vk .pv-stat-nube.nube-error .nube-dot { background: var(--rojo); }
+.panel-vk .nube-recargar { font-size: 15px; }
 .panel-vk .live-dot {
   width: 8px; height: 8px; border-radius: 50%; background: var(--amarillo);
   box-shadow: 0 0 0 0 rgba(255, 214, 0, 0.7); animation: pvPulse 1.6s infinite;

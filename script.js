@@ -4,38 +4,83 @@ const supabaseAnonKey = "sb_publishable_WT7LbFYCjIAWTo__N360KQ_Erdh1-Y8";
 
 let supabaseClient = null;
 
+// Estado de la conexión con la nube (se muestra en el panel de jueces)
+function setEstadoNube(ok, detalle) {
+  const el = document.getElementById('estadoNube');
+  if (!el) return;
+  el.classList.toggle('nube-ok', !!ok);
+  el.classList.toggle('nube-error', !ok);
+  el.title = detalle || (ok ? 'Conectado a la nube' : 'Sin conexión con la nube');
+  const txt = document.getElementById('estadoNubeTexto');
+  if (txt) txt.textContent = ok ? 'Nube conectada' : 'Nube sin conexión';
+}
+
+// Traduce los errores de Supabase a algo entendible
+function mensajeErrorNube(error) {
+  if (!error) return 'Error desconocido';
+  const msg = error.message || String(error);
+  if (error.code === 'PGRST204' || /column/i.test(msg)) return `La tabla de Supabase no tiene un campo que envía la página (${msg}).`;
+  if (error.code === '42501' || /row-level security|permission/i.test(msg)) return 'Supabase no da permiso para guardar (revisar las políticas RLS de la tabla "competidores").';
+  if (/payload|too large|413/i.test(msg)) return 'El archivo del comprobante es demasiado grande.';
+  if (/fetch|network|Failed/i.test(msg)) return 'No hay conexión a internet o Supabase no responde.';
+  return msg;
+}
+
+// Prepara el registro para la base de datos (N/A -> vacío en los números)
+function paraSupabase(comp) {
+  const { id, ...datos } = comp;
+  ['peso', 'estatura'].forEach(k => {
+    if (datos[k] === 'N/A' || datos[k] === '' || datos[k] === undefined) datos[k] = null;
+  });
+  return datos;
+}
+
 async function fetchAllFromSupabase() {
-  if (!supabaseClient) return;
+  if (!supabaseClient) { setEstadoNube(false, 'No cargó la librería de Supabase'); return false; }
   try {
     const { data, error } = await supabaseClient.from('competidores').select('*').order('id', { ascending: true });
     if (error) throw error;
     if (data) {
-      localStorage.setItem('competidores', JSON.stringify(data));
+      saveCompetidores(data);
       loadCompetitors();
     }
+    setEstadoNube(true);
+    return true;
   } catch (err) {
     console.error("Error descargando de Supabase:", err);
+    setEstadoNube(false, mensajeErrorNube(err));
+    return false;
   }
 }
 
+// Guarda (o borra) un competidor en Supabase. Devuelve { ok, error }.
 async function syncCompetidorToSupabase(comp, borrar = false) {
-  if (!supabaseClient) return;
+  if (!supabaseClient) {
+    return { ok: false, error: 'No se pudo conectar con la base de datos (la librería de Supabase no cargó).' };
+  }
   try {
     if (borrar) {
-      await supabaseClient.from('competidores').delete().eq('cedula', comp.cedula);
-      return;
+      const { error } = await supabaseClient.from('competidores').delete().eq('cedula', comp.cedula);
+      if (error) throw error;
+      return { ok: true };
     }
-    // Revisar si existe
-    const { data } = await supabaseClient.from('competidores').select('id').eq('cedula', comp.cedula);
-    if (data && data.length > 0) {
-      const { id, ...updateData } = comp;
-      await supabaseClient.from('competidores').update(updateData).eq('cedula', comp.cedula);
-    } else {
-      const { id, ...insertData } = comp;
-      await supabaseClient.from('competidores').insert(insertData);
-    }
+    const datos = paraSupabase(comp);
+    const { data: existentes, error: errorBuscar } = await supabaseClient.from('competidores').select('id').eq('cedula', comp.cedula);
+    if (errorBuscar) throw errorBuscar;
+
+    const { error } = (existentes && existentes.length > 0)
+      ? await supabaseClient.from('competidores').update(datos).eq('cedula', comp.cedula)
+      : await supabaseClient.from('competidores').insert(datos);
+    if (error) throw error;
+    return { ok: true };
   } catch (err) {
     console.error("Error sincronizando competidor a Supabase:", err);
+    const texto = mensajeErrorNube(err);
+    setEstadoNube(false, texto);
+    if (typeof showToast === 'function' && document.body.classList.contains('modo-panel')) {
+      showToast(`No se guardó en la nube: ${texto}`, 'error');
+    }
+    return { ok: false, error: texto };
   }
 }
 // ===================================
@@ -71,8 +116,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Carga inicial desde la nube
       fetchAllFromSupabase();
+
+      // Respaldo por si el tiempo real no está activo: refresca cada 30 s con el panel abierto
+      setInterval(() => {
+        if (document.body.classList.contains('modo-panel') && !editMode) fetchAllFromSupabase();
+      }, 30000);
     } else {
       console.warn("SDK de Supabase no disponible. Usando almacenamiento local.");
+      setEstadoNube(false, 'No cargó la librería de Supabase');
     }
   } catch (e) {
     console.error("Error inicializando Supabase:", e);
@@ -220,13 +271,22 @@ function setupInscripcionForm() {
     previewContainer.style.display = 'flex';
 
     if (file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        comprobanteArchivo.dataUrl = ev.target.result;
-        imgPreview.src = ev.target.result;
+      // Las fotos del celular pesan varios MB: se reducen antes de guardarlas
+      comprimirImagen(file).then(dataUrl => {
+        comprobanteArchivo.dataUrl = dataUrl;
+        imgPreview.src = dataUrl;
         imgPreview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
+        const kb = Math.round((dataUrl.length * 3 / 4) / 1024);
+        fileNameSpan.textContent = `Archivo: ${file.name} (${kb} KB)`;
+      }).catch(() => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          comprobanteArchivo.dataUrl = ev.target.result;
+          imgPreview.src = ev.target.result;
+          imgPreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      });
     } else {
       // PDF o documento
       imgPreview.style.display = 'none';
@@ -273,8 +333,10 @@ function setupInscripcionForm() {
   });
 
   // Envío del formulario oficial de inscripción
-  formInscripcion.addEventListener('submit', (e) => {
+  formInscripcion.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btnEnviar = document.getElementById('btnSubmitInscripcion');
+    if (btnEnviar && btnEnviar.disabled) return;
 
     const nombre = document.getElementById('regNombre').value.trim();
     const correo = document.getElementById('regCorreo').value.trim();
@@ -342,14 +404,28 @@ function setupInscripcionForm() {
       fechaInscripcion: new Date().toLocaleDateString('es-CO')
     };
 
-    if (indexExistente !== -1) {
-      competidores[indexExistente] = { ...competidores[indexExistente], ...nuevoCompetidor };
-      syncCompetidorToSupabase(competidores[indexExistente]);
-    } else {
-      competidores.push(nuevoCompetidor);
-      syncCompetidorToSupabase(nuevoCompetidor);
+    const registro = indexExistente !== -1
+      ? { ...competidores[indexExistente], ...nuevoCompetidor }
+      : nuevoCompetidor;
+
+    if (comprobanteArchivo.tipo.startsWith('image/') && !comprobanteArchivo.dataUrl) {
+      alert("El comprobante todavía se está procesando. Espere un segundo e intente de nuevo.");
+      return;
     }
 
+    // Enviar a la base de datos y esperar la respuesta antes de confirmar
+    const textoOriginal = btnEnviar ? btnEnviar.innerHTML : '';
+    if (btnEnviar) { btnEnviar.disabled = true; btnEnviar.textContent = 'Enviando inscripción...'; }
+    const resultado = await syncCompetidorToSupabase(registro);
+    if (btnEnviar) { btnEnviar.disabled = false; btnEnviar.innerHTML = textoOriginal; }
+
+    if (!resultado.ok) {
+      alert(`No se pudo completar la inscripción.\n\n${resultado.error}\n\nRevise su conexión e intente de nuevo. Si el problema continúa, comuníquese con la organización.`);
+      return;
+    }
+
+    if (indexExistente !== -1) competidores[indexExistente] = registro;
+    else competidores.push(registro);
     saveCompetidores(competidores);
 
     // Mostrar modal con ticket de atleta
@@ -532,6 +608,14 @@ function setupEventListeners() {
   document.getElementById('buscador').addEventListener('input', filtrarTabla);
   const filtroCategoria = document.getElementById('filtroCategoria');
   if (filtroCategoria) filtroCategoria.addEventListener('change', filtrarTabla);
+
+  const btnNube = document.getElementById('estadoNube');
+  if (btnNube) {
+    btnNube.addEventListener('click', async () => {
+      const ok = await fetchAllFromSupabase();
+      showToast(ok ? 'Lista actualizada desde la nube' : 'No se pudo conectar con la nube', ok ? 'success' : 'error');
+    });
+  }
 
   document.querySelectorAll('.pv-tab').forEach(tab => {
     tab.addEventListener('click', () => mostrarPvTab(tab.dataset.tab));
@@ -798,7 +882,33 @@ function getCompetidores() {
 }
 
 function saveCompetidores(competidores) {
-  localStorage.setItem('competidores', JSON.stringify(competidores));
+  try {
+    localStorage.setItem('competidores', JSON.stringify(competidores));
+  } catch (e) {
+    console.warn('No se pudo guardar la copia local (almacenamiento lleno):', e);
+  }
+}
+
+// Reduce una foto a máx. 1400 px y la guarda como JPEG liviano
+function comprimirImagen(file, maxLado = 1400, calidad = 0.72) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const escala = Math.min(1, maxLado / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * escala);
+      canvas.height = Math.round(img.height * escala);
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', calidad));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('No se pudo leer la imagen')); };
+    img.src = url;
+  });
 }
 
 // ─── LISTA DE COMPETIDORES ────────────────────────────────
