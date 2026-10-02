@@ -413,6 +413,9 @@
           <button type="button" class="pv-stat pv-stat-nube" id="estadoNube" title="Actualizar desde la nube">
             <span class="nube-dot"></span> <span id="estadoNubeTexto">Conectando...</span> <span class="nube-recargar">↻</span>
           </button>
+          <button type="button" class="pv-stat pv-stat-salir" id="btnCerrarSesion" title="Cerrar sesión">
+            <span id="juezEmail"></span> Salir
+          </button>
           <button type="button" class="pv-stat pv-stat-online" id="statCardOnlinePendientes" title="Ver inscritos online con datos pendientes">
             <span class="live-dot"></span> Online por completar <strong id="statOnlinePendientes">0</strong>
           </button>
@@ -656,11 +659,12 @@
     <div class="modal-card" style="max-width: 400px; text-align: center;">
       <div class="modal-header">
         <h3>Acceso Restringido</h3>
-        <p>Por favor, ingrese la contraseña de administrador</p>
+        <p>Ingrese con su cuenta de juez</p>
       </div>
       <div style="padding: 20px;">
-        <input type="password" id="adminPassword" placeholder="Contraseña" style="width: 100%; text-align: center; margin-bottom: 15px;">
-        <p id="adminLoginError" style="color: #ff3333; font-size: 13px; display: none; margin-bottom: 10px;">Contraseña incorrecta.</p>
+        <input type="email" id="adminEmail" placeholder="Correo" autocomplete="username" inputmode="email" style="width: 100%; margin-bottom: 10px;">
+        <input type="password" id="adminPassword" placeholder="Contraseña" autocomplete="current-password" style="width: 100%; margin-bottom: 15px;">
+        <p id="adminLoginError" style="color: #ff3333; font-size: 13px; display: none; margin-bottom: 10px;">Correo o contraseña incorrectos.</p>
         <div style="display: flex; gap: 10px; justify-content: center;">
           <button type="button" class="btn-close-modal" id="btnCancelarAdminLogin" style="background-color: #555;">Cancelar</button>
           <button type="button" class="btn-epic-submit" id="btnIngresarAdmin" style="padding: 10px 20px; font-size: 16px;">Ingresar</button>

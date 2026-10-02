@@ -37,6 +37,7 @@ function paraSupabase(comp) {
 
 async function fetchAllFromSupabase() {
   if (!supabaseClient) { setEstadoNube(false, 'No cargó la librería de Supabase'); return false; }
+  if (!juezAutenticado) return false;
   try {
     const { data, error } = await supabaseClient.from('competidores').select('*').order('id', { ascending: true });
     if (error) throw error;
@@ -50,6 +51,21 @@ async function fetchAllFromSupabase() {
     console.error("Error descargando de Supabase:", err);
     setEstadoNube(false, mensajeErrorNube(err));
     return false;
+  }
+}
+
+// Inscripción desde la página pública: solo puede insertar (no lee la tabla)
+async function insertarInscripcionPublica(registro) {
+  if (!supabaseClient) {
+    return { ok: false, error: 'No se pudo conectar con la base de datos (la librería de Supabase no cargó).' };
+  }
+  try {
+    const { error } = await supabaseClient.from('competidores').insert(paraSupabase(registro));
+    if (error) throw error;
+    return { ok: true };
+  } catch (err) {
+    console.error('Error guardando inscripción:', err);
+    return { ok: false, error: mensajeErrorNube(err) };
   }
 }
 
@@ -121,8 +137,8 @@ async function subirArchivo(carpeta, nombreBase, blob, contentType) {
     const { error } = await supabaseClient.storage.from(BUCKET_ARCHIVOS)
       .upload(ruta, blob, { contentType, cacheControl: '3600', upsert: false });
     if (error) throw error;
-    const { data } = supabaseClient.storage.from(BUCKET_ARCHIVOS).getPublicUrl(ruta);
-    return { ok: true, url: data.publicUrl };
+    // Espacio privado: se guarda la ruta y los jueces piden un enlace temporal para verlo
+    return { ok: true, url: `sb://${BUCKET_ARCHIVOS}/${ruta}` };
   } catch (err) {
     console.error('Error subiendo archivo:', err);
     const msg = err.message || String(err);
@@ -144,7 +160,26 @@ function dataUrlABlob(dataUrl) {
   return new Blob([arr], { type: tipo });
 }
 
-function esUrlArchivo(v) { return typeof v === 'string' && /^(https?:|data:)/.test(v) && !/placeholder$/.test(v); }
+function esUrlArchivo(v) { return typeof v === 'string' && /^(https?:|data:|sb:\/\/)/.test(v) && !/placeholder$/.test(v); }
+
+// Convierte lo guardado en la tabla en un enlace que se pueda abrir (temporal si es privado)
+async function urlParaVer(valor) {
+  if (!esUrlArchivo(valor)) return '';
+  if (valor.startsWith('data:')) return valor;
+  let ruta = null;
+  if (valor.startsWith('sb://')) {
+    ruta = valor.slice(('sb://' + BUCKET_ARCHIVOS + '/').length);
+  } else {
+    const marca = `/storage/v1/object/public/${BUCKET_ARCHIVOS}/`;
+    const i = valor.indexOf(marca);
+    if (i !== -1) ruta = decodeURIComponent(valor.slice(i + marca.length));
+  }
+  if (!ruta) return valor;
+  if (!supabaseClient) throw new Error('Sin conexión con la nube');
+  const { data, error } = await supabaseClient.storage.from(BUCKET_ARCHIVOS).createSignedUrl(ruta, 60 * 30);
+  if (error) throw error;
+  return data.signedUrl;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   // Inicializar Supabase DENTRO del DOMContentLoaded para asegurar que el SDK esté cargado
@@ -153,20 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
       supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
       console.log("Supabase conectado correctamente.");
 
-      // Sincronización en tiempo real
-      supabaseClient.channel('db-changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'competidores' }, () => {
-          fetchAllFromSupabase();
-        })
-        .subscribe();
-
-      // Carga inicial desde la nube
-      fetchAllFromSupabase();
-
-      // Respaldo por si el tiempo real no está activo: refresca cada 30 s con el panel abierto
-      setInterval(() => {
-        if (document.body.classList.contains('modo-panel') && !editMode) fetchAllFromSupabase();
-      }, 30000);
+      // Si un juez ya había iniciado sesión en este navegador, se restaura
+      restaurarSesionJuez();
     } else {
       console.warn("SDK de Supabase no disponible. Usando almacenamiento local.");
       setEstadoNube(false, 'No cargó la librería de Supabase');
@@ -182,6 +205,83 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
+   SESIÓN DE JUECES (Supabase Auth)
+   ========================================================================== */
+
+let juezAutenticado = false;
+let canalTiempoReal = null;
+let intervaloRefresco = null;
+
+async function verificarJuez() {
+  const { data, error } = await supabaseClient.rpc('es_juez');
+  if (error) throw error;
+  return data === true;
+}
+
+async function restaurarSesionJuez() {
+  if (!supabaseClient) return;
+  try {
+    const { data } = await supabaseClient.auth.getSession();
+    if (data && data.session && await verificarJuez()) {
+      activarSesionJuez(data.session.user.email);
+    } else {
+      localStorage.removeItem('competidores');
+    }
+  } catch (e) {
+    console.warn('No se pudo restaurar la sesión:', e);
+  }
+}
+
+function activarSesionJuez(email) {
+  juezAutenticado = true;
+  const etiqueta = document.getElementById('juezEmail');
+  if (etiqueta) etiqueta.textContent = email || '';
+  fetchAllFromSupabase();
+
+  if (!canalTiempoReal) {
+    canalTiempoReal = supabaseClient.channel('db-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'competidores' }, () => fetchAllFromSupabase())
+      .subscribe();
+  }
+  if (!intervaloRefresco) {
+    // Respaldo por si el tiempo real no está activo: refresca cada 30 s con el panel abierto
+    intervaloRefresco = setInterval(() => {
+      if (document.body.classList.contains('modo-panel') && !editMode) fetchAllFromSupabase();
+    }, 30000);
+  }
+}
+
+async function iniciarSesionJuez(email, password) {
+  if (!supabaseClient) return { ok: false, error: 'No hay conexión con la base de datos.' };
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    return { ok: false, error: /invalid/i.test(error.message) ? 'Correo o contraseña incorrectos.' : error.message };
+  }
+  try {
+    if (!(await verificarJuez())) {
+      await supabaseClient.auth.signOut();
+      return { ok: false, error: 'Esta cuenta no está autorizada como juez.' };
+    }
+  } catch (e) {
+    await supabaseClient.auth.signOut();
+    return { ok: false, error: 'No se pudo verificar el permiso de juez (¿se ejecutó el SQL de seguridad?).' };
+  }
+  activarSesionJuez(data.user.email);
+  return { ok: true };
+}
+
+async function cerrarSesionJuez() {
+  if (supabaseClient) await supabaseClient.auth.signOut();
+  juezAutenticado = false;
+  if (canalTiempoReal) { supabaseClient.removeChannel(canalTiempoReal); canalTiempoReal = null; }
+  if (intervaloRefresco) { clearInterval(intervaloRefresco); intervaloRefresco = null; }
+  // No dejar datos personales guardados en este computador
+  localStorage.removeItem('competidores');
+  loadCompetitors();
+  document.getElementById('tabInscripcionBtn').click();
+}
+
+/* ==========================================================================
    NAVEGACIÓN ENTRE PESTAÑAS (TABS)
    ========================================================================== */
 
@@ -194,10 +294,9 @@ function setupTabs() {
   const adminLoginModal = document.getElementById('adminLoginModal');
   const btnCancelarAdminLogin = document.getElementById('btnCancelarAdminLogin');
   const btnIngresarAdmin = document.getElementById('btnIngresarAdmin');
+  const adminEmail = document.getElementById('adminEmail');
   const adminPassword = document.getElementById('adminPassword');
   const adminLoginError = document.getElementById('adminLoginError');
-
-  let adminAuntenticado = false;
 
   if (tabInscripcionBtn && tabClasificacionBtn) {
     tabInscripcionBtn.addEventListener('click', () => {
@@ -210,7 +309,7 @@ function setupTabs() {
     });
 
     tabClasificacionBtn.addEventListener('click', () => {
-      if (!adminAuntenticado) {
+      if (!juezAutenticado) {
         adminPassword.value = '';
         adminLoginError.style.display = 'none';
         adminLoginModal.style.display = 'flex';
@@ -236,18 +335,38 @@ function setupTabs() {
     });
   }
 
-  if (btnIngresarAdmin) {
-    btnIngresarAdmin.addEventListener('click', () => {
-      const pwd = adminPassword.value;
-      if (pwd === 'admin123' || pwd === 'vikingos2026') { // Contraseñas de prueba
-        adminAuntenticado = true;
-        adminLoginModal.style.display = 'none';
-        mostrarTabAdmin();
-      } else {
-        adminLoginError.style.display = 'block';
-      }
-    });
+  async function intentarLogin() {
+    const email = adminEmail.value.trim();
+    const pwd = adminPassword.value;
+    if (!email || !pwd) {
+      adminLoginError.textContent = 'Escriba el correo y la contraseña.';
+      adminLoginError.style.display = 'block';
+      return;
+    }
+    btnIngresarAdmin.disabled = true;
+    btnIngresarAdmin.textContent = 'Ingresando...';
+    const res = await iniciarSesionJuez(email, pwd);
+    btnIngresarAdmin.disabled = false;
+    btnIngresarAdmin.textContent = 'Ingresar';
+    if (res.ok) {
+      adminPassword.value = '';
+      adminLoginModal.style.display = 'none';
+      mostrarTabAdmin();
+    } else {
+      adminLoginError.textContent = res.error;
+      adminLoginError.style.display = 'block';
+    }
   }
+
+  if (btnIngresarAdmin) {
+    btnIngresarAdmin.addEventListener('click', intentarLogin);
+    [adminEmail, adminPassword].forEach(inp => inp && inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') intentarLogin();
+    }));
+  }
+
+  const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+  if (btnCerrarSesion) btnCerrarSesion.addEventListener('click', cerrarSesionJuez);
 }
 
 /* ==========================================================================
@@ -428,26 +547,19 @@ function setupInscripcionForm() {
     const categoria = categoriaRadio.value;
     const division = divisionRadio.value;
     const radicadoCode = `VK-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-    const numeroCompetidor = generarNumeroUnico();
-
-    // Guardar competidor en localStorage
-    const competidores = getCompetidores();
-    
-    // Verificar si ya existe por cédula
-    const indexExistente = competidores.findIndex(c => String(c.cedula).trim() === cedula);
-
+    // El número oficial lo asignan los jueces en el pesaje
     const nuevoCompetidor = {
-      numero: indexExistente !== -1 ? competidores[indexExistente].numero : numeroCompetidor,
+      numero: null,
       nombre: nombre,
       cedula: cedula,
       correo: correo,
       celular: celular,
       ciudad: ciudad,
       categoria: categoria,
-      peso: indexExistente !== -1 ? competidores[indexExistente].peso : 'N/A',
-      estatura: indexExistente !== -1 ? competidores[indexExistente].estatura : 'N/A',
+      peso: null,
+      estatura: null,
       division: division,
-      subdivision: indexExistente !== -1 ? competidores[indexExistente].subdivision : 'Pendiente de pesaje',
+      subdivision: 'Pendiente de pesaje',
       pago: 'Pagado Online',
       asistencia: 'Pendiente',
       comprobanteUrl: '',
@@ -458,9 +570,7 @@ function setupInscripcionForm() {
       fechaInscripcion: new Date().toLocaleDateString('es-CO')
     };
 
-    const registro = indexExistente !== -1
-      ? { ...competidores[indexExistente], ...nuevoCompetidor }
-      : nuevoCompetidor;
+    const registro = nuevoCompetidor;
 
     if (!comprobanteArchivo.blob) {
       alert("El comprobante todavía se está procesando. Espere un segundo e intente de nuevo.");
@@ -493,17 +603,13 @@ function setupInscripcionForm() {
 
     // 3) Guardar la inscripción
     estadoBoton('Enviando inscripción...');
-    const resultado = await syncCompetidorToSupabase(registro);
+    const resultado = await insertarInscripcionPublica(registro);
     restaurarBoton();
 
     if (!resultado.ok) {
       alert(`No se pudo completar la inscripción.\n\n${resultado.error}\n\nRevise su conexión e intente de nuevo. Si el problema continúa, comuníquese con la organización.`);
       return;
     }
-
-    if (indexExistente !== -1) competidores[indexExistente] = registro;
-    else competidores.push(registro);
-    saveCompetidores(competidores);
 
     // Mostrar modal con ticket de atleta
     mostrarTicketAtleta(nuevoCompetidor);
@@ -1147,7 +1253,7 @@ function actualizarChipsFiltro(competidores, conteo) {
   });
 }
 
-function verComprobante(index) {
+async function verComprobante(index) {
   const comp = getCompetidores()[index];
   if (!comp) return;
 
@@ -1157,8 +1263,16 @@ function verComprobante(index) {
 
   modalSubtitle.textContent = `Atleta: ${comp.nombre} (C.C. ${comp.cedula})`;
 
-  const url = esUrlArchivo(comp.comprobanteUrl) ? comp.comprobanteUrl : '';
-  const esPdf = /\.pdf($|\?)/i.test(url) || /\.pdf$/i.test(comp.comprobanteNombre || '');
+  const esPdf = /\.pdf($|\?)/i.test(comp.comprobanteUrl || '') || /\.pdf$/i.test(comp.comprobanteNombre || '');
+  modalBody.innerHTML = '<p style="color:#aaa;">Cargando comprobante...</p>';
+  modal.style.display = 'flex';
+  let url = '';
+  try {
+    url = await urlParaVer(comp.comprobanteUrl);
+  } catch (e) {
+    modalBody.innerHTML = `<p style="color:#ff6666;">No se pudo abrir el archivo: ${escapeHtml(mensajeErrorNube(e))}</p>`;
+    return;
+  }
   const nombreArchivo = escapeHtml(comp.comprobanteNombre || 'Comprobante');
 
   if (url && !esPdf) {
@@ -1182,10 +1296,19 @@ function verComprobante(index) {
   modal.style.display = 'flex';
 }
 
-function verMusica(index) {
+async function verMusica(index) {
   const comp = getCompetidores()[index];
   if (!comp || !esUrlArchivo(comp.musicaUrl)) return;
-  const url = escapeHtml(comp.musicaUrl);
+  const cuerpo = document.getElementById('comprobanteModalBody');
+  cuerpo.innerHTML = '<p style="color:#aaa;">Cargando música...</p>';
+  document.getElementById('verComprobanteModal').style.display = 'flex';
+  let url = '';
+  try {
+    url = escapeHtml(await urlParaVer(comp.musicaUrl));
+  } catch (e) {
+    cuerpo.innerHTML = `<p style="color:#ff6666;">No se pudo abrir la música: ${escapeHtml(mensajeErrorNube(e))}</p>`;
+    return;
+  }
   document.getElementById('comprobanteModalSubtitle').textContent = `Música de ${comp.nombre} (#${esVacio(comp.numero) ? '—' : comp.numero})`;
   document.getElementById('comprobanteModalBody').innerHTML = `
     <p style="color:#f5b027;font-weight:600;margin-bottom:12px;word-break:break-word;">${escapeHtml(comp.musicaNombre || 'Pista MP3')}</p>
@@ -1303,9 +1426,7 @@ function exportarExcel() {
       "Pago": comp.pago || '',
       "Asistencia": comp.asistencia || '',
       "Comprobante": comp.comprobanteNombre || 'No adjunto',
-      "Link comprobante": (esUrlArchivo(comp.comprobanteUrl) && String(comp.comprobanteUrl).startsWith('http')) ? comp.comprobanteUrl : '',
-      "Música": comp.musicaNombre || '',
-      "Link música": esUrlArchivo(comp.musicaUrl) ? comp.musicaUrl : ''
+      "Música": comp.musicaNombre || (esUrlArchivo(comp.musicaUrl) ? 'Adjunta' : '')
     };
   });
 
