@@ -69,26 +69,24 @@ async function insertarInscripcionPublica(registro) {
   }
 }
 
-// Guarda (o borra) un competidor en Supabase. Devuelve { ok, error }.
+// Guarda (o borra) un competidor en Supabase usando su ID estable.
 async function syncCompetidorToSupabase(comp, borrar = false) {
   if (!supabaseClient) {
     return { ok: false, error: 'No se pudo conectar con la base de datos (la librería de Supabase no cargó).' };
   }
   try {
     if (borrar) {
-      const { error } = await supabaseClient.from('competidores').delete().eq('cedula', comp.cedula);
+      if (comp.id == null) return { ok: false, error: 'El registro no tiene un ID de nube; actualice la lista antes de borrarlo.' };
+      const { error } = await supabaseClient.from('competidores').delete().eq('id', comp.id);
       if (error) throw error;
       return { ok: true };
     }
     const datos = paraSupabase(comp);
-    const { data: existentes, error: errorBuscar } = await supabaseClient.from('competidores').select('id').eq('cedula', comp.cedula);
-    if (errorBuscar) throw errorBuscar;
-
-    const { error } = (existentes && existentes.length > 0)
-      ? await supabaseClient.from('competidores').update(datos).eq('cedula', comp.cedula)
-      : await supabaseClient.from('competidores').insert(datos);
+    const { data, error } = comp.id != null
+      ? await supabaseClient.from('competidores').update(datos).eq('id', comp.id).select('id').single()
+      : await supabaseClient.from('competidores').insert(datos).select('id').single();
     if (error) throw error;
-    return { ok: true };
+    return { ok: true, id: data?.id ?? comp.id };
   } catch (err) {
     console.error("Error sincronizando competidor a Supabase:", err);
     const texto = mensajeErrorNube(err);
@@ -390,6 +388,12 @@ function setupInscripcionForm() {
       regComprobante.click();
     }
   });
+  comprobanteDropzone.addEventListener('keydown', e => {
+    if (e.target === comprobanteDropzone && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      regComprobante.click();
+    }
+  });
 
   comprobanteDropzone.addEventListener('dragover', (e) => {
     e.preventDefault();
@@ -427,6 +431,15 @@ function setupInscripcionForm() {
   function procesarArchivoComprobante(file) {
     if (file.size > 10 * 1024 * 1024) {
       alert("El archivo supera el límite de 10MB permitido.");
+      return;
+    }
+
+    const extensionPermitida = /\.(jpe?g|png|webp|pdf)$/i.test(file.name);
+    const tipoPermitido = extensionPermitida && (!file.type
+      || (['image/jpeg', 'image/png', 'image/webp'].includes(file.type) && !/\.pdf$/i.test(file.name))
+      || (file.type === 'application/pdf' && /\.pdf$/i.test(file.name)));
+    if (!tipoPermitido) {
+      alert('Formato no permitido. Adjunte una imagen JPG, PNG o WEBP, o un PDF.');
       return;
     }
 
@@ -478,6 +491,12 @@ function setupInscripcionForm() {
       regMusica.click();
     }
   });
+  musicaDropzone.addEventListener('keydown', e => {
+    if (e.target === musicaDropzone && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      regMusica.click();
+    }
+  });
 
   regMusica.addEventListener('change', (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -486,6 +505,11 @@ function setupInscripcionForm() {
         alert("El archivo de audio supera los 10MB permitidos.");
         return;
       }
+      if (!/\.mp3$/i.test(file.name) || (file.type && !['audio/mpeg', 'audio/mp3', 'application/octet-stream'].includes(file.type))) {
+        alert('Formato no permitido. Adjunte una pista MP3.');
+        return;
+      }
+      if (musicaArchivo.url) URL.revokeObjectURL(musicaArchivo.url);
       musicaArchivo.nombre = file.name;
       musicaArchivo.file = file;
       musicaArchivo.url = URL.createObjectURL(file);
@@ -497,6 +521,7 @@ function setupInscripcionForm() {
 
   removerMusicaBtn.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (musicaArchivo.url) URL.revokeObjectURL(musicaArchivo.url);
     musicaArchivo = { nombre: '', url: null, file: null };
     regMusica.value = '';
     musicaAudioPreview.src = '';
@@ -560,7 +585,8 @@ function setupInscripcionForm() {
       estatura: null,
       division: division,
       subdivision: 'Pendiente de pesaje',
-      pago: 'Pagado Online',
+      // El juez confirma el pago después de revisar el comprobante.
+      pago: 'Pendiente',
       asistencia: 'Pendiente',
       comprobanteUrl: '',
       comprobanteNombre: comprobanteArchivo.nombre || '',
@@ -596,7 +622,7 @@ function setupInscripcionForm() {
     // 2) Subir la música (opcional)
     if (musicaArchivo.file) {
       estadoBoton('Subiendo música...');
-      const subidaMusica = await subirArchivo(cedula, musicaArchivo.nombre || 'musica.mp3', musicaArchivo.file, musicaArchivo.file.type || 'audio/mpeg');
+      const subidaMusica = await subirArchivo(cedula, musicaArchivo.nombre || 'musica.mp3', musicaArchivo.file, 'audio/mpeg');
       if (!subidaMusica.ok) { fallo(`Música: ${subidaMusica.error}`); return; }
       registro.musicaUrl = subidaMusica.url;
     }
@@ -620,6 +646,7 @@ function setupInscripcionForm() {
     previewContainer.style.display = 'none';
     imgPreview.src = '';
     fileNameSpan.textContent = '';
+    if (musicaArchivo.url) URL.revokeObjectURL(musicaArchivo.url);
     musicaArchivo = { nombre: '', url: null, file: null };
     musicaPreviewContainer.style.display = 'none';
     musicaAudioPreview.src = '';
@@ -746,6 +773,7 @@ function faltantesCompetidor(c, conteoNumeros) {
   if (!cat) f.push('categoría');
   if (cat && necesitaPeso(cat) && aNumero(c.peso) <= 0) f.push('peso');
   if (cat && necesitaEstatura(cat) && aNumero(c.estatura) <= 0) f.push('estatura');
+  if (!normalizarDivision(c.division)) f.push('división');
 
   if (cat && divisionConSubdivision(c.division) && !f.includes('peso') && !f.includes('estatura')) {
     const res = calcularSubdivision(cat, c.division, aNumero(c.peso), aNumero(c.estatura));
@@ -802,6 +830,16 @@ function setupEventListeners() {
 
   document.querySelectorAll('.pv-tab').forEach(tab => {
     tab.addEventListener('click', () => mostrarPvTab(tab.dataset.tab));
+    tab.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      const tabs = [...document.querySelectorAll('.pv-tab')];
+      const actual = tabs.indexOf(tab);
+      const delta = e.key === 'ArrowRight' ? 1 : -1;
+      const siguiente = tabs[(actual + delta + tabs.length) % tabs.length];
+      mostrarPvTab(siguiente.dataset.tab);
+      siguiente.focus();
+    });
   });
 
   // Controles del formulario en teléfono (hoja deslizable)
@@ -825,9 +863,16 @@ function setupEventListeners() {
     });
   }
 
-  document.getElementById('competidorForm').addEventListener('submit', function(e) {
+  document.getElementById('competidorForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    handleFormSubmit();
+    const boton = document.getElementById('btnGuardarCompetidor');
+    if (boton?.disabled) return;
+    if (boton) boton.disabled = true;
+    try {
+      await handleFormSubmit();
+    } finally {
+      if (boton) boton.disabled = false;
+    }
   });
 
   const btnCerrarVerComprobante = document.getElementById('btnCerrarVerComprobante');
@@ -862,33 +907,35 @@ function clasificarAutomaticamente() {
   return true;
 }
 
-function clasificarTodos() {
+async function clasificarTodos() {
   const competidores = getCompetidores();
   if (!competidores.length) { showToast('No hay competidores', 'warning'); return; }
   if (!confirm("¿Clasificar automáticamente TODOS los competidores?\nEsta acción actualizará solo las subdivisiones.")) return;
 
-  let actualizados = 0;
-  let errores = 0;
-
-  const nuevos = competidores.map(c => {
+  let erroresCalculo = 0;
+  const cambios = competidores.map(async c => {
     const res = calcularSubdivision(c.categoria, c.division, aNumero(c.peso), aNumero(c.estatura));
-    if (res.error) { errores++; return c; }
+    if (res.error) { erroresCalculo++; return { ok: true, competidor: c, cambiado: false }; }
     const sub = res.subdivision || 'No aplica';
-    if (sub === c.subdivision) return c;
+    if (sub === c.subdivision) return { ok: true, competidor: c, cambiado: false };
     const nc = { ...c, subdivision: sub };
-    syncCompetidorToSupabase(nc);
-    actualizados++;
-    return nc;
+    const resultado = await syncCompetidorToSupabase(nc);
+    return { ok: resultado.ok, competidor: resultado.ok ? { ...nc, id: resultado.id } : c, cambiado: resultado.ok };
   });
 
+  const resultados = await Promise.all(cambios);
+  const erroresNube = resultados.filter(r => !r.ok).length;
+  const actualizados = resultados.filter(r => r.cambiado).length;
+  const nuevos = resultados.map(r => r.competidor);
   saveCompetidores(nuevos);
   loadCompetitors();
-  showToast(
-    errores
-      ? `${actualizados} actualizados · ${errores} sin clasificar por datos pendientes (filtra "Datos incompletos")`
-      : `${actualizados} subdivisiones actualizadas`,
-    errores ? 'warning' : 'success'
-  );
+  if (erroresNube) {
+    showToast(`${actualizados} guardados · ${erroresNube} no se sincronizaron con la nube`, 'error');
+  } else if (erroresCalculo) {
+    showToast(`${actualizados} actualizados · ${erroresCalculo} sin clasificar por datos pendientes`, 'warning');
+  } else {
+    showToast(`${actualizados} subdivisiones actualizadas`);
+  }
 }
 
 // ─── CLASSIC PHYSIQUE (tabla oficial Vikingos Classic) ───
@@ -960,7 +1007,7 @@ function calcularSubdivision(categoria, division, peso, estatura) {
 }
 
 // ─── FORMULARIO DE PESAJE ─────────────────────────────────
-function handleFormSubmit() {
+async function handleFormSubmit() {
   const competidorData = {
     numero: document.getElementById('numero').value.trim(),
     nombre: document.getElementById('nombre').value.trim(),
@@ -998,12 +1045,14 @@ function handleFormSubmit() {
 
   if (editMode) {
     const anterior = competidores[editId] || {};
-    updateCompetidor(editId, competidorData);
+    const guardado = await updateCompetidor(editId, competidorData);
+    if (!guardado) return;
     showToast(esInscripcionOnline(anterior)
       ? `Inscripción online de ${competidorData.nombre} actualizada`
       : `${competidorData.nombre} actualizado`);
   } else {
-    addCompetidor(competidorData);
+    const guardado = await addCompetidor(competidorData);
+    if (!guardado) return;
     showToast(`${competidorData.nombre} registrado`);
   }
 
@@ -1026,34 +1075,40 @@ function validarCompetidor(data) {
   return true;
 }
 
-function addCompetidor(data) {
+async function addCompetidor(data) {
   const competidores = getCompetidores();
-  competidores.push(data);
+  const resultado = await syncCompetidorToSupabase(data);
+  if (!resultado.ok) return false;
+  competidores.push({ ...data, id: resultado.id });
   saveCompetidores(competidores);
-  syncCompetidorToSupabase(data);
   loadCompetitors();
+  return true;
 }
 
-function updateCompetidor(id, newData) {
+async function updateCompetidor(id, newData) {
   const competidores = getCompetidores();
   // Conserva correo, radicado, comprobante, música... de la inscripción online
   const updatedComp = { ...(competidores[id] || {}), ...newData };
+  const resultado = await syncCompetidorToSupabase(updatedComp);
+  if (!resultado.ok) return false;
+  updatedComp.id = resultado.id;
   competidores[id] = updatedComp;
   saveCompetidores(competidores);
-  syncCompetidorToSupabase(updatedComp);
   loadCompetitors();
   editMode = false;
   editId = null;
+  return true;
 }
 
-function deleteCompetidor(id) {
+async function deleteCompetidor(id) {
   const competidores = getCompetidores();
   const deletedComp = competidores[id];
   if (!deletedComp) return;
   if (!confirm(`¿Borrar a ${deletedComp.nombre}?`)) return;
+  const resultado = await syncCompetidorToSupabase(deletedComp, true);
+  if (!resultado.ok) return;
   competidores.splice(id, 1);
   saveCompetidores(competidores);
-  syncCompetidorToSupabase(deletedComp, true);
   loadCompetitors();
 }
 
@@ -1160,8 +1215,8 @@ function addRowToTable(data, index, conteo) {
     ? '<span class="tag tag-ok">✓ Completo</span>'
     : `<span class="tag tag-falta">Falta: ${escapeHtml(faltan.join(', '))}</span>`;
 
-  const pagoClass = data.pago === 'Pendiente' ? 'color: #ff3333;' : 'color: #4caf50;';
-  const asistenciaClass = data.asistencia === 'Pesado' ? 'color: #4caf50;' : (data.asistencia === 'En fila' ? 'color: #e5a93b;' : 'color: #aaa;');
+  const pagoClass = data.pago === 'Pendiente' ? 'color: #dfa19c;' : 'color: #9bceb0;';
+  const asistenciaClass = data.asistencia === 'Pesado' ? 'color: #9bceb0;' : (data.asistencia === 'En fila' ? 'color: #d8b96f;' : 'color: #a1a6aa;');
   const mostrar = v => esVacio(v) ? '<span class="dato-vacio">—</span>' : escapeHtml(v);
 
   const conUnidad = (v, u) => esVacio(v) ? '<span class="dato-vacio">—</span>' : escapeHtml(v) + u;
@@ -1409,6 +1464,7 @@ function exportarExcel() {
   const datosFormateados = competidores.map(comp => {
     const faltan = faltantesCompetidor(comp, conteo);
     return {
+      "ID de registro": comp.id || '',
       "Origen": esInscripcionOnline(comp) ? 'Online' : 'En sitio',
       "Estado datos": faltan.length ? `Falta: ${faltan.join(', ')}` : 'Completo',
       "Radicado": comp.radicado || '',
@@ -1485,19 +1541,19 @@ function normalizarCategoria(val) {
   for (const key of claves) {
     if (k.includes(key)) return map[key];
   }
-  return claveCategoria(val) || 'bodybuilding';
+  return claveCategoria(val);
 }
 
 function normalizarDivision(val) {
   const k = limpiarClave(val || '');
-  if (!k) return 'Novato';
+  if (!k) return '';
   if (k.includes('prejuvenil') || k.includes('prejoven')) return 'Prejuvenil';
   if (k.includes('juvenil') || k.includes('joven')) return 'Juvenil';
   if (k.includes('seminovato')) return 'Semi-novatos';
   if (k.includes('novato')) return 'Novato';
   if (k.includes('avanzado') || k.includes('advance')) return 'Avanzado';
   if (k.includes('master') || k.includes('senior')) return 'Master';
-  return 'Novato';
+  return '';
 }
 
 function importarDatos(e) {
@@ -1506,7 +1562,7 @@ function importarDatos(e) {
   const esExcel = file.name.toLowerCase().endsWith('.xlsx');
   const reader = new FileReader();
 
-  reader.onload = ev => {
+  reader.onload = async ev => {
     try {
       let datos = [];
       const normNum = v => {
@@ -1520,7 +1576,7 @@ function importarDatos(e) {
         const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '', raw: false });
         datos = rows.map(row => {
           const categoria = normalizarCategoria(String(buscarCampo(row, 'Categoría', 'Categoria', 'Category', 'Cat') || ''));
-          const division = normalizarDivision(String(buscarCampo(row, 'División', 'Division', 'Div', 'Grupo') || 'Novato'));
+          const division = normalizarDivision(String(buscarCampo(row, 'División', 'Division', 'Div', 'Grupo') || ''));
           const peso = normNum(buscarCampo(row, 'Peso (kg)', 'Peso', 'weight', 'kg'));
           const estatura = normNum(buscarCampo(row, 'Estatura (m)', 'Estatura', 'altura', 'height', 'talla'));
           const numero = buscarCampo(row, 'Número', 'Numero', 'Num', 'N°', 'No', '#');
@@ -1541,6 +1597,8 @@ function importarDatos(e) {
             pago: String(buscarCampo(row, 'Pago', 'Estado de pago') || 'Pendiente'),
             asistencia: String(buscarCampo(row, 'Asistencia') || 'Pendiente')
           };
+          const id = buscarCampo(row, 'ID de registro', 'Registro ID', 'ID');
+          if (id !== null && id !== undefined && String(id).trim() !== '') item.id = id;
           const correo = buscarCampo(row, 'Correo', 'Email', 'Correo electronico');
           const celular = buscarCampo(row, 'Celular', 'Telefono', 'WhatsApp');
           const radicado = buscarCampo(row, 'Radicado');
@@ -1561,11 +1619,25 @@ function importarDatos(e) {
         }));
       }
 
-      if (confirm(`¿Importar ${datos.length} registros? Se reemplazarán los datos actuales de este navegador y se subirán a la nube.`)) {
-        saveCompetidores(datos);
-        datos.forEach(d => syncCompetidorToSupabase(d));
-        loadCompetitors();
-        showToast(`${datos.length} competidores importados`);
+      if (confirm(`¿Importar ${datos.length} registros? Se reemplazará la lista de este navegador. Las filas con ID de este proyecto se actualizarán y las filas sin ID se agregarán. Las filas que no estén en el archivo no se borrarán de Supabase.`)) {
+        const sincronizados = [];
+        let errores = 0;
+        for (const competidor of datos) {
+          const resultado = await syncCompetidorToSupabase(competidor);
+          if (resultado.ok) sincronizados.push({ ...competidor, id: resultado.id });
+          else errores++;
+        }
+
+        if (errores) {
+          const recargaCorrecta = await fetchAllFromSupabase();
+          showToast(recargaCorrecta
+            ? `${sincronizados.length} registros sincronizados · ${errores} con error; se recargó la lista desde la nube`
+            : `${sincronizados.length} registros sincronizados · ${errores} con error; no se pudo recargar la lista de la nube`, 'error');
+        } else {
+          saveCompetidores(sincronizados);
+          loadCompetitors();
+          showToast(`${sincronizados.length} competidores importados`);
+        }
       }
     } catch (error) {
       showToast(`Error al importar: ${error.message}`, 'error');
@@ -1588,12 +1660,22 @@ function generarNumeroUnico() {
   return n;
 }
 
-function borrarTodosLosCompetidores() {
+async function borrarTodosLosCompetidores() {
   const competidores = getCompetidores();
   if (!competidores.length) { showToast('No hay competidores para borrar', 'warning'); return; }
 
   if (confirm(`¿ESTÁ SEGURO DE QUE DESEA BORRAR TODOS LOS ${competidores.length} COMPETIDORES?\n\nEsta acción no se puede deshacer.`)) {
     if (confirm("¿REALMENTE ESTÁ SEGURO? Esta acción eliminará permanentemente todos los datos.")) {
+      if (!supabaseClient || !juezAutenticado) {
+        showToast('Inicie sesión como juez para borrar registros de la nube', 'error');
+        return;
+      }
+      const { error } = await supabaseClient.from('competidores').delete().not('id', 'is', null);
+      if (error) {
+        console.error('No se pudieron borrar todos los competidores en Supabase:', error);
+        showToast(`No se borró la lista de la nube: ${mensajeErrorNube(error)}`, 'error');
+        return;
+      }
       localStorage.removeItem('competidores');
       loadCompetitors();
       showToast(`Se han borrado los ${competidores.length} competidores`, 'error');
@@ -1654,6 +1736,10 @@ function itemClasificacion(c) {
 function generarClasificacionFinal() {
   const competidores = getCompetidores();
   if (!competidores.length) { showToast('No hay competidores registrados para generar la clasificación', 'warning'); return; }
+
+  const hayCambiosTemporales = [...document.querySelectorAll('.td-puesto')].some(campo => campo.value.trim())
+    || [...document.querySelectorAll('.grupos-container')].some(panel => panel.style.display !== 'none');
+  if (hayCambiosTemporales && !confirm('Al generar de nuevo se perderán los puestos escritos y los grupos que aún no hayas confirmado. ¿Continuar?')) return;
 
   cancelarFusion();
   const contenedor = document.getElementById('tablasClasificacion');
@@ -1750,7 +1836,12 @@ function cerrarFormularioMovil() {
 
 // Cambia entre "Lista de Competidores" y "Clasificación Final"
 function mostrarPvTab(nombre) {
-  document.querySelectorAll('.pv-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === nombre));
+  document.querySelectorAll('.pv-tab').forEach(t => {
+    const activo = t.dataset.tab === nombre;
+    t.classList.toggle('active', activo);
+    t.setAttribute('aria-selected', String(activo));
+    t.tabIndex = activo ? 0 : -1;
+  });
   document.querySelectorAll('.pv-tab-content').forEach(c => c.classList.toggle('active', c.id === 'pvtab-' + nombre));
   const panel = document.getElementById('seccionClasificacion');
   if (panel && panel.getBoundingClientRect().top < 0) panel.scrollIntoView({ behavior: 'smooth' });
@@ -1789,7 +1880,7 @@ function buildTablaHTML(titulo, items, opciones = {}) {
   const filas = items.map(it => {
     const tdPeso = usaPeso ? `<td class="col-pesaje col-peso" style="display:none">${esVacio(it.peso) ? '—' : escapeHtml(it.peso) + 'kg'}</td>` : '';
     const tdEst = usaEstatura ? `<td class="col-pesaje col-estatura" style="display:none">${esVacio(it.estatura) ? '—' : escapeHtml(it.estatura) + 'm'}</td>` : '';
-    return `<tr><td><strong>${escapeHtml(it.numero)}</strong></td><td>${escapeHtml(it.nombre)}</td><td>${escapeHtml(it.ciudad)}</td>${tdPeso}${tdEst}<td class="td-puesto" contenteditable="true" inputmode="numeric" title="Haz clic para escribir el puesto"></td></tr>`;
+    return `<tr><td><strong>${escapeHtml(it.numero)}</strong></td><td>${escapeHtml(it.nombre)}</td><td>${escapeHtml(it.ciudad)}</td>${tdPeso}${tdEst}<td><input class="td-puesto puesto-input" type="number" min="1" step="1" aria-label="Puesto de ${escapeHtml(it.nombre)}" title="Escribe un puesto entero mayor que cero"></td></tr>`;
   }).join('');
 
   const gruposHTML = esGrupo ? '' : `
@@ -2055,6 +2146,16 @@ function exportarClasificacionFinal() {
   const tablas = document.querySelectorAll('.tabla-clasificacion');
   if (!tablas.length) { showToast('Primero genere la clasificación final', 'warning'); return; }
 
+  const puestosInvalidos = [...document.querySelectorAll('.puesto-input')].some(input => {
+    if (!input.value.trim()) return false;
+    const puesto = Number(input.value);
+    return !Number.isInteger(puesto) || puesto < 1;
+  });
+  if (puestosInvalidos) {
+    showToast('Los puestos deben ser números enteros mayores que cero', 'warning');
+    return;
+  }
+
   const hojas = {};
   tablas.forEach(tabla => {
     const titulo = tabla.dataset.titulo || 'Tabla';
@@ -2079,7 +2180,7 @@ function exportarClasificacionFinal() {
     } else {
       hojas[cat].push(['NÚMERO', 'NOMBRE', 'CIUDAD', 'PUESTO']);
       tabla.querySelectorAll('.tabla-body tbody tr').forEach(row => {
-        const puesto = row.querySelector('.td-puesto')?.textContent.trim() || '';
+        const puesto = row.querySelector('.td-puesto')?.value.trim() || '';
         hojas[cat].push([row.cells[0].textContent.trim(), row.cells[1].textContent.trim(), row.cells[2].textContent.trim(), puesto]);
       });
       hojas[cat].push([]);

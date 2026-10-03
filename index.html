@@ -283,8 +283,8 @@
             <label class="section-label">Subir Comprobante de Pago (Scanner o foto legible) <span class="required">*</span></label>
             <p class="field-hint">Sube una fotografía nítida o PDF del comprobante de transferencia bancaria (Máx. 10MB).</p>
             
-            <div class="file-upload-box" id="comprobanteDropzone">
-              <input type="file" id="regComprobante" accept="image/*,.pdf" style="display: none;" required>
+            <div class="file-upload-box" id="comprobanteDropzone" role="group" tabindex="0" aria-label="Seleccionar comprobante de pago" aria-controls="regComprobante">
+              <input type="file" id="regComprobante" accept="image/jpeg,image/png,image/webp,.pdf" style="display: none;" required>
               <div class="upload-icon"></div>
               <p class="upload-text"><span class="solo-pc"><strong>Haz clic aquí para seleccionar archivo</strong> o arrástralo y suéltalo</span><span class="solo-movil"><strong>Toca aquí para subir la foto o el PDF</strong> del comprobante</span></p>
               <span class="upload-subtext">Formatos permitidos: JPG, PNG, WEBP, PDF (Hasta 10MB)</span>
@@ -304,7 +304,7 @@
             <label class="section-label">Música en formato MP3 <span class="optional">(Para las categorías que corresponda)</span></label>
             <p class="field-hint">Si tu categoría incluye coreografía / rutina individual libre, sube aquí tu pista en formato MP3 (Máx. 10MB).</p>
             
-            <div class="file-upload-box audio-upload-box" id="musicaDropzone">
+            <div class="file-upload-box audio-upload-box" id="musicaDropzone" role="group" tabindex="0" aria-label="Seleccionar pista MP3" aria-controls="regMusica">
               <input type="file" id="regMusica" accept="audio/mp3,audio/mpeg" style="display: none;">
               <div class="upload-icon"></div>
               <p class="upload-text"><strong>Selecciona tu pista de audio MP3</strong> (Opcional)</p>
@@ -530,13 +530,13 @@
 
         <!-- MAIN -->
         <div class="pv-main">
-          <div class="pv-tabs">
-            <div class="pv-tab active" data-tab="competidores" id="listaCompetidoresTitulo">Lista de Competidores</div>
-            <div class="pv-tab" data-tab="clasificacion">Clasificación Final</div>
+          <div class="pv-tabs" role="tablist" aria-label="Secciones del panel de jueces">
+            <button type="button" class="pv-tab active" role="tab" aria-selected="true" tabindex="0" aria-controls="pvtab-competidores" data-tab="competidores" id="listaCompetidoresTitulo">Lista de Competidores</button>
+            <button type="button" class="pv-tab" role="tab" aria-selected="false" tabindex="-1" aria-controls="pvtab-clasificacion" data-tab="clasificacion" id="clasificacionTabTitulo">Clasificación Final</button>
           </div>
 
           <!-- TAB COMPETIDORES -->
-          <div class="pv-tab-content active" id="pvtab-competidores">
+          <div class="pv-tab-content active" id="pvtab-competidores" role="tabpanel" aria-labelledby="listaCompetidoresTitulo" tabindex="0">
             <div class="pv-mobile-toolbar">
               <button type="button" class="btn btn-primary" id="btnNuevoMovil">+ Nuevo competidor</button>
               <button type="button" class="btn btn-ghost" id="btnAccionesMovil">⚙ Acciones</button>
@@ -601,7 +601,7 @@
           </div>
 
           <!-- TAB CLASIFICACIÓN -->
-          <div class="pv-tab-content" id="pvtab-clasificacion">
+          <div class="pv-tab-content" id="pvtab-clasificacion" role="tabpanel" aria-labelledby="clasificacionTabTitulo" tabindex="0">
             <div class="pv-clasif-header">
               <h2>Clasificación Final</h2>
               <div class="pv-clasif-botones">
