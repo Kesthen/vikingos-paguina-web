@@ -685,14 +685,14 @@ function mostrarTicketAtleta(atleta) {
 
 function formatearNombreCategoria(cat) {
   const nombres = {
-    'bodybuilding': 'Bodybuilding',
-    'classic_physique': 'Classic Physique',
-    'mens_physique': "Men's Physique",
-    'wellness': 'Wellness',
-    'bikini': 'Bikini',
-    'figure': 'Figure',
     'fit_model': 'Fit Model',
+    'bikini': 'Bikini',
+    'classic_physique': 'Classic Physique',
+    'wellness': 'Wellness',
+    'mens_physique': "Men's Physique",
+    'figure': 'Figure',
     'womans_physique': "Woman's Physique",
+    'bodybuilding': 'Bodybuilding',
     'wheelchair': 'Wheelchair'
   };
   return nombres[cat] || cat;
@@ -769,7 +769,6 @@ function faltantesCompetidor(c, conteoNumeros) {
   const f = [];
   const cat = claveCategoria(c.categoria);
   if (esVacio(c.numero)) f.push('número');
-  else if (conteoNumeros && conteoNumeros[String(c.numero).trim()] > 1) f.push('número repetido');
   if (!cat) f.push('categoría');
   if (cat && necesitaPeso(cat) && aNumero(c.peso) <= 0) f.push('peso');
   if (cat && necesitaEstatura(cat) && aNumero(c.estatura) <= 0) f.push('estatura');
@@ -1024,7 +1023,8 @@ async function handleFormSubmit() {
 
   if (!validarCompetidor(competidorData)) return;
 
-  // Número duplicado con otro atleta
+  // Número duplicado: solo bloquea si es otra persona (distinta cédula)
+  // Un mismo atleta puede usar el mismo número en varias categorías/divisiones
   const competidores = getCompetidores();
   const duplicado = competidores.find((c, i) =>
     String(c.numero).trim() === competidorData.numero &&
@@ -1032,7 +1032,19 @@ async function handleFormSubmit() {
     (!editMode || i !== editId)
   );
   if (duplicado) {
-    showToast(`El número ${competidorData.numero} ya está asignado a ${duplicado.nombre}`, 'error');
+    showToast(`El número ${competidorData.numero} ya está asignado a ${duplicado.nombre} (cédula distinta). Si es el mismo atleta, usa la misma cédula.`, 'error');
+    return;
+  }
+
+  // Evitar duplicado exacto: misma cédula + misma categoría + misma división
+  const duplicadoExacto = competidores.find((c, i) =>
+    String(c.cedula).trim() === competidorData.cedula &&
+    claveCategoria(c.categoria) === competidorData.categoria &&
+    normalizarDivision(c.division) === competidorData.division &&
+    (!editMode || i !== editId)
+  );
+  if (duplicadoExacto) {
+    showToast(`${competidorData.nombre} ya está inscrito en ${competidorData.categoria} / ${competidorData.division}`, 'warning');
     return;
   }
 
@@ -1715,15 +1727,15 @@ function divisionesCon(subs) {
 const SUBS_ESTATURA_FEM = ['Hasta 1.60m', '1.60-1.65m', '1.65-1.70m', '1.70-1.75m', 'Más de 1.75m'];
 
 const CATEGORIAS_DEF = [
-  { clave: 'mens_physique', nombre: "MEN'S PHYSIQUE", divisiones: divisionesCon(['Hasta 1.70m', '1.70-1.75m', '1.75-1.80m', 'Más de 1.80m']) },
-  { clave: 'classic_physique', nombre: 'CLASSIC PHYSIQUE', divisiones: divisionesCon(['Clase A', 'Clase B', 'Clase C', 'Clase D']) },
-  { clave: 'bodybuilding', nombre: 'BODYBUILDING', divisiones: divisionesCon(['Hasta 70kg', '70-80kg', '80-90kg', 'Más de 90kg']) },
-  { clave: 'wheelchair', nombre: 'WHEELCHAIR', divisiones: divisionesCon([]) },
   { clave: 'fit_model', nombre: 'FIT MODEL', divisiones: divisionesCon(SUBS_ESTATURA_FEM) },
   { clave: 'bikini', nombre: 'BIKINI', divisiones: divisionesCon(SUBS_ESTATURA_FEM) },
+  { clave: 'classic_physique', nombre: 'CLASSIC PHYSIQUE', divisiones: divisionesCon(['Clase A', 'Clase B', 'Clase C', 'Clase D']) },
   { clave: 'wellness', nombre: 'WELLNESS', divisiones: divisionesCon(SUBS_ESTATURA_FEM) },
+  { clave: 'mens_physique', nombre: "MEN'S PHYSIQUE", divisiones: divisionesCon(['Hasta 1.70m', '1.70-1.75m', '1.75-1.80m', 'Más de 1.80m']) },
   { clave: 'figure', nombre: 'FIGURE', divisiones: divisionesCon(SUBS_ESTATURA_FEM) },
-  { clave: 'womans_physique', nombre: "WOMAN'S PHYSIQUE", divisiones: divisionesCon(SUBS_ESTATURA_FEM) }
+  { clave: 'womans_physique', nombre: "WOMAN'S PHYSIQUE", divisiones: divisionesCon(SUBS_ESTATURA_FEM) },
+  { clave: 'bodybuilding', nombre: 'BODYBUILDING', divisiones: divisionesCon(['Hasta 70kg', '70-80kg', '80-90kg', 'Más de 90kg']) },
+  { clave: 'wheelchair', nombre: 'WHEELCHAIR', divisiones: divisionesCon([]) }
 ];
 
 const normSub = s => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -2156,45 +2168,87 @@ function exportarClasificacionFinal() {
     return;
   }
 
-  const hojas = {};
+  let contenido = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Vikingos Classic - Clasificación Final</title>
+<style>
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #0a0b0e; color: #f0f2f5; padding: 30px; margin: 0; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { text-align: center; color: #d0a85f; text-transform: uppercase; font-size: 28px; border-bottom: 2px solid #d0a85f; padding-bottom: 15px; margin-bottom: 40px; letter-spacing: 2px; }
+  .categoria { background: #12141a; padding: 25px; border-radius: 12px; border: 1px solid rgba(208, 168, 95, 0.4); margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+  .categoria h2 { color: #d0a85f; text-align: center; margin-top: 0; font-size: 22px; letter-spacing: 1px; text-transform: uppercase; }
+  .grupo h3 { color: #e6c887; text-align: center; font-size: 16px; margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #1a1d24; border-radius: 8px; overflow: hidden; }
+  th { background-color: rgba(208, 168, 95, 0.15); color: #d0a85f; padding: 12px; border: 1px solid rgba(208, 168, 95, 0.3); font-size: 14px; text-transform: uppercase; }
+  td { padding: 12px; border: 1px solid rgba(208, 168, 95, 0.2); text-align: center; font-size: 15px; }
+  .num { font-weight: bold; color: #c25b55; font-size: 16px; }
+  .puesto { font-weight: bold; color: #d0a85f; font-size: 18px; }
+  @media print {
+    body { background-color: #fff; color: #000; padding: 0; }
+    h1, .categoria h2, .grupo h3, .puesto, th { color: #000; border-color: #000; }
+    .categoria { background: #fff; border: 1px solid #000; box-shadow: none; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; }
+    .grupo { page-break-inside: avoid; break-inside: avoid; }
+    table { background: #fff; border: 1px solid #000; width: 100%; page-break-inside: auto; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    th { background-color: #eee; }
+    td { border: 1px solid #ccc; }
+    .num { color: #000; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Clasificación Final - Vikingos Classic</h1>`;
+
   tablas.forEach(tabla => {
     const titulo = tabla.dataset.titulo || 'Tabla';
-    const cat = tabla.dataset.cat || 'General';
-    if (!hojas[cat]) hojas[cat] = [];
+    contenido += `\n  <div class="categoria">\n    <h2>${titulo}</h2>`;
 
     const grupos = tabla.querySelectorAll('.grupo-zona');
     const cont = tabla.querySelector('.grupos-container');
     const gruposAbiertos = grupos.length > 0 && cont && cont.style.display !== 'none';
 
-    hojas[cat].push([titulo]);
     if (gruposAbiertos) {
       grupos.forEach(zona => {
-        hojas[cat].push([zona.dataset.nombre]);
-        hojas[cat].push(['NÚMERO', 'NOMBRE', 'CIUDAD', 'PUESTO']);
+        contenido += `\n    <div class="grupo">\n      <h3>${zona.dataset.nombre}</h3>`;
+        contenido += `\n      <table>\n        <thead><tr><th>Número</th><th>Nombre</th><th>Ciudad</th><th>Puesto</th></tr></thead>\n        <tbody>`;
         zona.querySelectorAll('.drag-item').forEach(it => {
           const d = JSON.parse(it.dataset.item);
-          hojas[cat].push([d.numero, d.nombre, d.ciudad, '']);
+          contenido += `\n        <tr><td class="num">#${d.numero}</td><td>${d.nombre}</td><td>${d.ciudad}</td><td class="puesto"></td></tr>`;
         });
-        hojas[cat].push([]);
+        contenido += `\n        </tbody>\n      </table>\n    </div>`;
       });
     } else {
-      hojas[cat].push(['NÚMERO', 'NOMBRE', 'CIUDAD', 'PUESTO']);
+      contenido += `\n    <table>\n      <thead><tr><th>Número</th><th>Nombre</th><th>Ciudad</th><th>Puesto</th></tr></thead>\n      <tbody>`;
       tabla.querySelectorAll('.tabla-body tbody tr').forEach(row => {
+        const numero = row.cells[0].textContent.trim();
+        const nombre = row.cells[1].textContent.trim();
+        const ciudad = row.cells[2].textContent.trim();
         const puesto = row.querySelector('.td-puesto')?.value.trim() || '';
-        hojas[cat].push([row.cells[0].textContent.trim(), row.cells[1].textContent.trim(), row.cells[2].textContent.trim(), puesto]);
+        contenido += `\n      <tr><td class="num">#${numero}</td><td>${nombre}</td><td>${ciudad}</td><td class="puesto">${puesto}</td></tr>`;
       });
-      hojas[cat].push([]);
+      contenido += `\n    </tbody>\n    </table>`;
     }
+    
+    contenido += `\n  </div>`;
   });
 
-  const wb = XLSX.utils.book_new();
-  Object.entries(hojas).forEach(([cat, rows]) => {
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols'] = [{ wch: 10 }, { wch: 32 }, { wch: 20 }, { wch: 10 }];
-    XLSX.utils.book_append_sheet(wb, ws, cat.replace(/[\\\/?*\[\]:]/g, '').substring(0, 31));
-  });
-  XLSX.writeFile(wb, `clasificacion_final_${hoy()}.xlsx`);
-  showToast('Clasificación exportada');
+  contenido += `\n</div>\n</body>\n</html>`;
+
+  const blob = new Blob([contenido], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `clasificacion_final_${hoy()}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  showToast('Archivo HTML descargado');
 }
 
 // Exportar globalmente funciones llamadas desde HTML
@@ -2213,3 +2267,48 @@ window.confirmarFusion = confirmarFusion;
 window.cancelarFusion = cancelarFusion;
 window.verPendientesEnLista = verPendientesEnLista;
 window.mostrarPvTab = mostrarPvTab;
+
+// Theme Toggle Logic
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+if (themeToggleBtn) {
+  const currentTheme = localStorage.getItem('theme') || 'dark';
+  if (currentTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeToggleBtn.querySelector('.theme-icon').textContent = '🌞';
+  }
+
+  themeToggleBtn.addEventListener('click', () => {
+    let theme = document.documentElement.getAttribute('data-theme');
+    if (theme === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'dark');
+      themeToggleBtn.querySelector('.theme-icon').textContent = '🌓';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+      themeToggleBtn.querySelector('.theme-icon').textContent = '🌞';
+    }
+  });
+}
+
+// Guia de Uso Logic
+const btnGuiaUso = document.getElementById('btnGuiaUso');
+const btnCerrarGuia = document.getElementById('btnCerrarGuia');
+const guiaModal = document.getElementById('guiaModal');
+
+if (btnGuiaUso && btnCerrarGuia && guiaModal) {
+  btnGuiaUso.addEventListener('click', () => {
+    guiaModal.style.display = 'flex';
+  });
+
+  btnCerrarGuia.addEventListener('click', () => {
+    guiaModal.style.display = 'none';
+  });
+
+  // Close modal when clicking outside of it
+  guiaModal.addEventListener('click', (e) => {
+    if (e.target === guiaModal) {
+      guiaModal.style.display = 'none';
+    }
+  });
+}

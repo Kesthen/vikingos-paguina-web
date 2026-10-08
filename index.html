@@ -33,6 +33,9 @@
         <button type="button" class="nav-tab" id="tabClasificacionBtn">
           <span></span> Panel de Jueces y Pesaje
         </button>
+        <button type="button" class="nav-tab theme-toggle" id="themeToggleBtn" title="Cambiar modo oscuro/claro">
+          <span class="theme-icon">🌓</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -172,10 +175,26 @@
               </label>
 
               <label class="option-card">
+                <input type="radio" name="regCategoria" value="classic_physique">
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Classic Physique</span>
+                </div>
+              </label>
+
+              <label class="option-card">
                 <input type="radio" name="regCategoria" value="wellness">
                 <div class="card-content">
                   <span class="card-icon"></span>
                   <span class="card-title">Wellness</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="regCategoria" value="mens_physique">
+                <div class="card-content">
+                  <span class="card-icon"></span>
+                  <span class="card-title">Men's Physique</span>
                 </div>
               </label>
 
@@ -192,22 +211,6 @@
                 <div class="card-content">
                   <span class="card-icon"></span>
                   <span class="card-title">Woman's Physique</span>
-                </div>
-              </label>
-
-              <label class="option-card">
-                <input type="radio" name="regCategoria" value="classic_physique">
-                <div class="card-content">
-                  <span class="card-icon"></span>
-                  <span class="card-title">Classic Physique</span>
-                </div>
-              </label>
-
-              <label class="option-card">
-                <input type="radio" name="regCategoria" value="mens_physique">
-                <div class="card-content">
-                  <span class="card-icon"></span>
-                  <span class="card-title">Men's Physique</span>
                 </div>
               </label>
 
@@ -413,11 +416,14 @@
           <button type="button" class="pv-stat pv-stat-nube" id="estadoNube" title="Actualizar desde la nube">
             <span class="nube-dot"></span> <span id="estadoNubeTexto">Conectando...</span> <span class="nube-recargar">↻</span>
           </button>
-          <button type="button" class="pv-stat pv-stat-salir" id="btnCerrarSesion" title="Cerrar sesión">
-            <span id="juezEmail"></span> Salir
-          </button>
           <button type="button" class="pv-stat pv-stat-online" id="statCardOnlinePendientes" title="Ver inscritos online con datos pendientes">
             <span class="live-dot"></span> Online por completar <strong id="statOnlinePendientes">0</strong>
+          </button>
+          <button type="button" class="pv-stat" id="btnGuiaUso" title="Ver manual de uso" style="cursor: pointer; border-color: var(--amarillo); color: var(--amarillo);">
+            📖 Manual de Uso
+          </button>
+          <button type="button" class="pv-stat pv-stat-salir" id="btnCerrarSesion" title="Cerrar sesión">
+            <span id="juezEmail"></span> Salir
           </button>
         </div>
       </div>
@@ -453,14 +459,14 @@
             <label for="categoria">Categoría</label>
             <select id="categoria">
               <option value="">Seleccione...</option>
-              <option value="bodybuilding">Bodybuilding</option>
-              <option value="classic_physique">Classic Physique</option>
-              <option value="mens_physique">Men's Physique</option>
-              <option value="wellness">Wellness</option>
-              <option value="bikini">Bikini</option>
-              <option value="figure">Figure</option>
               <option value="fit_model">Fit Model</option>
+              <option value="bikini">Bikini</option>
+              <option value="classic_physique">Classic Physique</option>
+              <option value="wellness">Wellness</option>
+              <option value="mens_physique">Men's Physique</option>
+              <option value="figure">Figure</option>
               <option value="womans_physique">Woman's Physique</option>
+              <option value="bodybuilding">Bodybuilding</option>
               <option value="wheelchair">Wheelchair</option>
             </select>
 
@@ -557,14 +563,14 @@
               </div>
               <select id="filtroCategoria">
                 <option value="">Todas las categorías</option>
-                <option value="bodybuilding">Bodybuilding</option>
-                <option value="classic_physique">Classic Physique</option>
-                <option value="mens_physique">Men's Physique</option>
-                <option value="wellness">Wellness</option>
-                <option value="bikini">Bikini</option>
-                <option value="figure">Figure</option>
                 <option value="fit_model">Fit Model</option>
+                <option value="bikini">Bikini</option>
+                <option value="classic_physique">Classic Physique</option>
+                <option value="wellness">Wellness</option>
+                <option value="mens_physique">Men's Physique</option>
+                <option value="figure">Figure</option>
                 <option value="womans_physique">Woman's Physique</option>
+                <option value="bodybuilding">Bodybuilding</option>
                 <option value="wheelchair">Wheelchair</option>
               </select>
             </div>
@@ -606,7 +612,7 @@
               <h2>Clasificación Final</h2>
               <div class="pv-clasif-botones">
                 <button type="button" class="btn btn-blue" id="generarClasificacionBtn">Generar Clasificación</button>
-                <button type="button" class="btn btn-green" id="exportarClasificacionBtn">↓ Exportar Excel</button>
+                <button type="button" class="btn btn-green" id="exportarClasificacionBtn" style="font-size: 15px; padding: 10px 20px;">⬇ Descargar Clasificación Final</button>
               </div>
             </div>
 
@@ -669,6 +675,35 @@
           <button type="button" class="btn-close-modal" id="btnCancelarAdminLogin" style="background-color: #555;">Cancelar</button>
           <button type="button" class="btn-epic-submit" id="btnIngresarAdmin" style="padding: 10px 20px; font-size: 16px;">Ingresar</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Manual de Uso -->
+  <div id="guiaModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>Manual de Uso del Panel</h3>
+        <p>Guía rápida para jueces y pesaje</p>
+      </div>
+      <div class="guia-content" style="padding: 20px 30px; text-align: left; max-height: 60vh; overflow-y: auto;">
+        <h4 style="color: var(--gold-accent); margin-top: 10px;">1. Registro y Pesaje</h4>
+        <p style="color: var(--text-main); font-size: 14px; margin-bottom: 15px;">En la barra lateral izquierda, puedes registrar un nuevo atleta o editar uno existente seleccionándolo en la tabla. Asegúrate de actualizar el "Pago" y "Asistencia". El campo "Subdivisión" se calcula automáticamente.</p>
+        
+        <h4 style="color: var(--gold-accent);">2. Lista de Competidores</h4>
+        <p style="color: var(--text-main); font-size: 14px; margin-bottom: 15px;">Usa los filtros superiores (Todos, En Sitio, Online) para ver quién falta por pesarse. Puedes buscar por nombre o número y filtrar por categoría.</p>
+        
+        <h4 style="color: var(--gold-accent);">3. Generar Clasificación</h4>
+        <p style="color: var(--text-main); font-size: 14px; margin-bottom: 15px;">Ve a la pestaña "Clasificación Final" y presiona "Generar Clasificación". El sistema agrupará a los atletas según su categoría, división y subdivisión de manera automática.</p>
+        
+        <h4 style="color: var(--gold-accent);">4. Fusionar Categorías (Restricciones)</h4>
+        <p style="color: var(--text-main); font-size: 14px; margin-bottom: 15px;">Si una categoría tiene pocos competidores, puedes fusionarla seleccionando el botón "Fusionar" y luego haciendo clic en la categoría destino. <strong style="color: #ff3333;">Restricción:</strong> ¡Revisa bien antes de fusionar, ya que mezclarás a esos atletas para siempre en la clasificación!</p>
+        
+        <h4 style="color: var(--gold-accent);">5. Descargar Clasificación Final</h4>
+        <p style="color: var(--text-main); font-size: 14px; margin-bottom: 15px;">Una vez que hayas asignado los puestos a los ganadores (en las casillas de texto amarillas), puedes presionar el botón verde "Descargar Clasificación Final" para bajar el Excel de resultados finales.</p>
+      </div>
+      <div class="modal-actions" style="margin-top: 20px;">
+        <button type="button" class="btn-close-modal" id="btnCerrarGuia">Entendido</button>
       </div>
     </div>
   </div>
