@@ -276,56 +276,92 @@ async function cerrarSesionJuez() {
   // No dejar datos personales guardados en este computador
   localStorage.removeItem('competidores');
   loadCompetitors();
-  document.getElementById('tabInscripcionBtn').click();
+  volverAPaginaPrincipal();
 }
 
 /* ==========================================================================
-   NAVEGACIÓN ENTRE PESTAÑAS (TABS)
+   NAVEGACIÓN ENTRE PÁGINA PRINCIPAL, INSCRIPCIÓN Y PANEL
    ========================================================================== */
 
+window.volverAPaginaPrincipal = function() {
+  const p = document.getElementById('paginaPrincipal');
+  const vi = document.getElementById('vistaInscripcion');
+  const vp = document.getElementById('vistaPanel');
+  if (vi) vi.style.display = 'none';
+  if (vp) vp.style.display = 'none';
+  if (p) p.style.display = 'block';
+  document.body.classList.remove('modo-inscripcion');
+  document.body.classList.remove('modo-panel');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.abrirInscripcion = function(categoria = null) {
+  const p = document.getElementById('paginaPrincipal');
+  const vi = document.getElementById('vistaInscripcion');
+  const vp = document.getElementById('vistaPanel');
+  if (p) p.style.display = 'none';
+  if (vp) vp.style.display = 'none';
+  if (vi) vi.style.display = 'block';
+  document.body.classList.remove('modo-panel');
+  document.body.classList.add('modo-inscripcion');
+
+  if (categoria) {
+    const radio = document.querySelector(`input[name="regCategoria"][value="${categoria}"]`);
+    if (radio) {
+      radio.checked = true;
+      radio.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    setTimeout(() => {
+      const formEl = document.getElementById('formInscripcionOficial');
+      if (formEl) {
+        formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 80);
+    return;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.abrirPanelJueces = function() {
+  if (!juezAutenticado) {
+    const adminPassword = document.getElementById('adminPassword');
+    const adminLoginError = document.getElementById('adminLoginError');
+    const adminLoginModal = document.getElementById('adminLoginModal');
+    if (adminPassword) adminPassword.value = '';
+    if (adminLoginError) adminLoginError.style.display = 'none';
+    if (adminLoginModal) adminLoginModal.style.display = 'flex';
+    return;
+  }
+  mostrarPanelJuecesDirecto();
+};
+
+function mostrarPanelJuecesDirecto() {
+  const p = document.getElementById('paginaPrincipal');
+  const vi = document.getElementById('vistaInscripcion');
+  const vp = document.getElementById('vistaPanel');
+  if (p) p.style.display = 'none';
+  if (vi) vi.style.display = 'none';
+  if (vp) vp.style.display = 'block';
+  document.body.classList.remove('modo-inscripcion');
+  document.body.classList.add('modo-panel');
+  loadCompetitors();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.inscribirmeDesdeModal = function() {
+  if (typeof closeCategoryModal === 'function') closeCategoryModal();
+  const titleEl = document.getElementById('modalTitle');
+  const catKey = titleEl ? titleEl.getAttribute('data-cat-key') : null;
+  abrirInscripcion(catKey);
+};
+
 function setupTabs() {
-  const tabInscripcionBtn = document.getElementById('tabInscripcionBtn');
-  const tabClasificacionBtn = document.getElementById('tabClasificacionBtn');
-  const seccionInscripcion = document.getElementById('seccionInscripcion');
-  const seccionClasificacion = document.getElementById('seccionClasificacion');
-  
   const adminLoginModal = document.getElementById('adminLoginModal');
   const btnCancelarAdminLogin = document.getElementById('btnCancelarAdminLogin');
   const btnIngresarAdmin = document.getElementById('btnIngresarAdmin');
   const adminEmail = document.getElementById('adminEmail');
   const adminPassword = document.getElementById('adminPassword');
   const adminLoginError = document.getElementById('adminLoginError');
-
-  if (tabInscripcionBtn && tabClasificacionBtn) {
-    tabInscripcionBtn.addEventListener('click', () => {
-      tabInscripcionBtn.classList.add('active');
-      tabClasificacionBtn.classList.remove('active');
-      seccionInscripcion.style.display = 'block';
-      seccionClasificacion.style.display = 'none';
-      document.body.classList.remove('modo-panel');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    tabClasificacionBtn.addEventListener('click', () => {
-      if (!juezAutenticado) {
-        adminPassword.value = '';
-        adminLoginError.style.display = 'none';
-        adminLoginModal.style.display = 'flex';
-        return;
-      }
-      mostrarTabAdmin();
-    });
-  }
-
-  function mostrarTabAdmin() {
-    tabClasificacionBtn.classList.add('active');
-    tabInscripcionBtn.classList.remove('active');
-    seccionInscripcion.style.display = 'none';
-    seccionClasificacion.style.display = 'block';
-    document.body.classList.add('modo-panel');
-    loadCompetitors();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
 
   if (btnCancelarAdminLogin) {
     btnCancelarAdminLogin.addEventListener('click', () => {
@@ -349,7 +385,7 @@ function setupTabs() {
     if (res.ok) {
       adminPassword.value = '';
       adminLoginModal.style.display = 'none';
-      mostrarTabAdmin();
+      mostrarPanelJuecesDirecto();
     } else {
       adminLoginError.textContent = res.error;
       adminLoginError.style.display = 'block';
