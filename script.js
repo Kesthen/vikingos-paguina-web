@@ -26,6 +26,18 @@ function mensajeErrorNube(error) {
   return msg;
 }
 
+function mensajeErrorStorage(error) {
+  const msg = error?.message || String(error || 'Error desconocido');
+  if (/row-level security|unauthorized|forbidden|permission|\b403\b|jwt/i.test(msg)) {
+    return `La cuenta de juez no tiene permiso para leer el bucket privado "${BUCKET_ARCHIVOS}". Verifica la política de lectura de Storage y que la sesión del juez siga activa.`;
+  }
+  if (/object not found|not found|\b404\b/i.test(msg)) {
+    return 'No se encontró el archivo en el bucket de comprobantes. Es posible que se haya eliminado o que la ruta guardada no coincida.';
+  }
+  if (/fetch|network|failed/i.test(msg)) return 'No hubo conexión con Supabase Storage. Revisa internet e intenta de nuevo.';
+  return msg;
+}
+
 // Prepara el registro para la base de datos (N/A -> vacío en los números)
 function paraSupabase(comp) {
   const { id, ...datos } = comp;
@@ -916,10 +928,21 @@ function setupEventListeners() {
   });
 
   const btnCerrarVerComprobante = document.getElementById('btnCerrarVerComprobante');
+  const modalVerComprobante = document.getElementById('verComprobanteModal');
   if (btnCerrarVerComprobante) {
     btnCerrarVerComprobante.addEventListener('click', () => {
-      document.getElementById('verComprobanteModal').style.display = 'none';
+      if (modalVerComprobante) modalVerComprobante.style.display = 'none';
       document.querySelectorAll('#comprobanteModalBody audio').forEach(a => a.pause());
+    });
+  }
+  if (modalVerComprobante) {
+    modalVerComprobante.addEventListener('click', e => {
+      if (e.target === modalVerComprobante) btnCerrarVerComprobante?.click();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modalVerComprobante.style.display !== 'none') {
+        btnCerrarVerComprobante?.click();
+      }
     });
   }
 }
@@ -1378,7 +1401,7 @@ async function verComprobante(index) {
   try {
     url = await urlParaVer(comp.comprobanteUrl);
   } catch (e) {
-    modalBody.innerHTML = `<p style="color:#ff6666;">No se pudo abrir el archivo: ${escapeHtml(mensajeErrorNube(e))}</p>`;
+    modalBody.innerHTML = `<p style="color:#ff6666;">No se pudo abrir el archivo: ${escapeHtml(mensajeErrorStorage(e))}</p>`;
     return;
   }
   const nombreArchivo = escapeHtml(comp.comprobanteNombre || 'Comprobante');
@@ -1414,7 +1437,7 @@ async function verMusica(index) {
   try {
     url = escapeHtml(await urlParaVer(comp.musicaUrl));
   } catch (e) {
-    cuerpo.innerHTML = `<p style="color:#ff6666;">No se pudo abrir la música: ${escapeHtml(mensajeErrorNube(e))}</p>`;
+    cuerpo.innerHTML = `<p style="color:#ff6666;">No se pudo abrir la música: ${escapeHtml(mensajeErrorStorage(e))}</p>`;
     return;
   }
   document.getElementById('comprobanteModalSubtitle').textContent = `Música de ${comp.nombre} (#${esVacio(comp.numero) ? '—' : comp.numero})`;
