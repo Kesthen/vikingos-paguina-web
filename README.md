@@ -8,16 +8,17 @@ Sitio estático para presentar el evento Vikingos Classic 2026, recibir inscripc
 index.html                    Portada, inscripción y panel de jueces
 styles.css                    Estilos del formulario y del panel
 script.js                     Navegación, inscripciones, Supabase y clasificaciones
-index.js                      Código antiguo; no lo carga index.html
-assets/                        Imágenes, logo y video de la portada
+assets/                        Imágenes, logos, pagos y video
 categorias/                    Imágenes de categorías y divisiones
 galeria/                       Fotos y videos de la galería
 reglamento/                    Imágenes del reglamento
+legacy/index.js                Implementación anterior, no cargada por el sitio actual
+tools/remove_emojis.py         Utilidad manual para quitar emojis del código
 supabase-security-hardening.sql Políticas de acceso para Supabase
 _redirects                    Redirección del dominio netlify.app al dominio público
 ```
 
-La portada usa estilos y algunos manejadores directamente en `index.html`. El formulario y el panel usan `styles.css` y `script.js`. El sitio no tiene paso de compilación ni dependencias npm: Netlify sirve los archivos estáticos.
+La portada usa estilos y algunos manejadores directamente en `index.html`. El formulario y el panel usan `styles.css` y `script.js`. Las carpetas `categorias/`, `galeria/` y `reglamento/` ya separan los medios por función. El sitio no tiene paso de compilación ni dependencias npm: Netlify sirve los archivos estáticos.
 
 ## Páginas y recorridos
 
@@ -60,4 +61,4 @@ El archivo `_redirects` redirige `vikingosclassic.netlify.app` a `vikingosclassi
 
 ## Archivos antiguos
 
-`index.js` contiene una implementación anterior con identificadores HTML distintos. No está incluido por `index.html`; no editarlo para cambios del sitio actual. Conservarlo hasta confirmar que no se necesita para otro flujo.
+`legacy/index.js` contiene una implementación anterior con identificadores HTML distintos. No está incluido por `index.html`; no editarlo para cambios del sitio actual. `tools/remove_emojis.py` modifica `index.html` y `script.js` directamente, así que no ejecutarlo sin hacer antes una copia de seguridad.

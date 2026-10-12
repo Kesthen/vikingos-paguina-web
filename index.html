@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-<!DOCTYPE html>
-<html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -23,12 +21,12 @@ body{background:var(--dark);color:var(--light);font-family:'Rajdhani',sans-serif
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:var(--dark);}
 ::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px;}
-nav{
+#navbar{
   position:fixed;top:0;left:0;right:0;z-index:1000;
   display:flex;align-items:center;justify-content:space-between;
   padding:1.2rem 5vw;transition:background .4s,padding .3s,box-shadow .4s;
 }
-nav.scrolled{
+#navbar.scrolled{
   background:rgba(6,6,6,.85);
   backdrop-filter:blur(15px);
   -webkit-backdrop-filter:blur(15px);
@@ -653,7 +651,7 @@ footer{background:var(--dark);border-top:1px solid rgba(255,255,255,.04);padding
   }
 }
 @media(max-width:768px){
-  .nav-links,.nav-cta{display:none;}
+  .nav-links,.nav-cta,.nav-cta-panel{display:none;}
   .hamburger{display:flex;}
   .social-row{grid-template-columns:1fr;}
   .gallery-mosaic{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
@@ -669,6 +667,29 @@ footer{background:var(--dark);border-top:1px solid rgba(255,255,255,.04);padding
   .cd-sep{display:none;}
   .cd-flex{gap:0.5rem;}
   .cd-unit-block{min-width:80px;padding:1rem 0.6rem;}
+}
+@media(max-width:1100px){
+  #navbar{padding:1rem 4vw;gap:1rem;}
+  .nav-links,.nav-cta,.nav-cta-panel{display:none;}
+  .hamburger{display:flex;}
+  .mobile-menu{gap:clamp(.75rem,2.5vh,1.5rem);padding:5rem 1.5rem 2rem;overflow-y:auto;}
+  .mobile-menu a{font-size:clamp(.9rem,3vw,1.1rem);}
+}
+@media(max-width:600px){
+  #hero{min-height:100svh;}
+  .hero-content{width:100%;padding:5rem 1rem 4rem;}
+  .hero-eyebrow{gap:.6rem;margin-bottom:1.25rem;}
+  .eyebrow-text{font-size:.55rem;letter-spacing:.25em;}
+  .eyebrow-line{width:28px;}
+  .hero-title{font-size:clamp(2.8rem,15vw,5rem);line-height:.95;}
+  .hero-sub{font-size:clamp(.75rem,3.5vw,1rem);letter-spacing:.24em;}
+  .hero-slogan{font-size:.72rem;margin-bottom:1.5rem;}
+  .hero-datebar{display:flex;width:100%;max-width:360px;flex-direction:column;margin-bottom:1.5rem;}
+  .hd-cell{padding:.7rem .5rem;font-size:.68rem;}
+  .hd-cell.a,.hd-cell.b{border-right:0;border-bottom:1px solid rgba(201,168,76,.25);}
+  .hero-btns{width:100%;gap:.75rem;}
+  .hero-btns a{width:100%;padding:.85rem 1rem;font-size:.65rem;}
+  .hero-scroll{display:none;}
 }
 
 /* Modal de Categorías */
@@ -1332,6 +1353,17 @@ footer{background:var(--dark);border-top:1px solid rgba(255,255,255,.04);padding
 .pm-card:hover .pm-copy-tooltip {
   opacity: 0.75;
 }
+@media (max-width: 600px) {
+  .cat-modal { padding: 12px; align-items: flex-start; overflow-y: auto; }
+  .cat-modal-card { max-height: calc(100dvh - 24px); padding: 1.25rem 1rem; }
+  .cat-modal-close { top: .75rem; right: .75rem; }
+  .cat-modal-header { padding-right: 2rem; }
+  .cat-modal-section { padding: 1rem; }
+  .cat-modal-footer { justify-content: center !important; }
+  .cat-modal-footer > * { max-width: 100%; }
+  .cat-modal-class-table { font-size: .78rem; }
+  #gal-lightbox { padding: 12px; }
+}
 @media (max-width: 768px) {
   .pm-grid {
     grid-template-columns: 1fr;
@@ -1427,7 +1459,7 @@ footer{background:var(--dark);border-top:1px solid rgba(255,255,255,.04);padding
       <div class="hd-cell c">Bogotá, Colombia</div>
     </div>
     <div class="hero-btns">
-      <a href="https://forms.gle/aFEUgWzPXxUtX6jh8" target="_blank" class="btn-fill">Inscribete ahora</a>
+      <a href="#inscripcion" onclick="event.preventDefault(); abrirInscripcion();" class="btn-fill">Inscribete ahora</a>
       <a href="#evento" class="btn-outline">Ver detalles</a>
     </div>
   </div>
@@ -2594,7 +2626,7 @@ document.addEventListener('keydown', function(e) {
 
       <!-- Barra superior del panel -->
       <div class="pv-header">
-        <img src="logo-vikingos.jpg" alt="Vikingos Classic" class="pv-logo">
+        <img src="assets/logo-vikingos.jpg" alt="Vikingos Classic" class="pv-logo">
         <h1>Clasifi<span>cación</span></h1>
         <div class="pv-stats">
           <button type="button" class="pv-stat" onclick="volverAPaginaPrincipal()" style="cursor: pointer; border-color: var(--gold-accent); color: var(--gold-accent);">

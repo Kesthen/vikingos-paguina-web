@@ -98,6 +98,39 @@ body.modo-panel {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
 }
 
+[data-theme="light"] .main-header {
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom-color: rgba(18, 20, 26, 0.12);
+  box-shadow: 0 4px 22px rgba(18, 20, 26, 0.12);
+}
+
+[data-theme="light"] .brand-title {
+  color: #873a35;
+  text-shadow: none;
+}
+
+[data-theme="light"] .brand-subtitle {
+  color: #76591f;
+}
+
+[data-theme="light"] .nav-tabs {
+  background: rgba(18, 20, 26, 0.05);
+  border-color: rgba(18, 20, 26, 0.1);
+}
+
+[data-theme="light"] .nav-tab {
+  color: #454b56;
+}
+
+[data-theme="light"] .nav-tab:hover {
+  color: #12141a;
+  background: rgba(18, 20, 26, 0.08);
+}
+
+[data-theme="light"] .nav-tab.active {
+  color: #fff;
+}
+
 .header-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -1915,4 +1948,46 @@ body.modo-panel .main-footer { display: none; }
   .ticket-row { flex-wrap: wrap; gap: 4px 10px; }
   .modal-actions .btn-print,
   .modal-actions .btn-close-modal { min-height: 48px; }
+}
+
+/* Vistas de inscripción y jueces en pantallas estrechas */
+@media (max-width: 900px) {
+  .main-header { position: sticky; top: 0; }
+  .header-inner { width: 100%; }
+  .panel-vk .pv-header { flex-wrap: wrap; }
+  .panel-vk .pv-header h1 { min-width: 0; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 600px) {
+  .main-content { padding: 14px 10px 40px; }
+  .back-nav-container { margin-bottom: 14px; }
+  .btn-back-home { max-width: 100%; white-space: normal; text-align: center; }
+  .event-banner { padding: 24px 12px 18px; }
+  .banner-title { overflow-wrap: anywhere; }
+  .form-container { padding: 20px 12px; }
+  .form-group-row { grid-template-columns: minmax(0, 1fr); }
+  .form-container input,
+  .form-container select,
+  .form-container textarea { max-width: 100%; }
+  .ticket-card { margin: 14px 12px; padding: 16px 12px; }
+  .ticket-header { flex-wrap: wrap; gap: 10px; }
+  .ticket-badge { max-width: 100%; overflow-wrap: anywhere; }
+  .modal-overlay { align-items: center; max-height: 100dvh; }
+  .modal-card { max-height: calc(100dvh - 24px); overflow-y: auto; }
+  .modal-actions { padding: 0 12px 14px; gap: 10px; }
+  .nav-tabs { gap: 6px; padding: 5px; }
+  .nav-tab { min-width: 0; padding: 10px 12px; }
+  .panel-vk .pv-header h1 { font-size: 19px; }
+  .panel-vk .pv-stats { max-width: 100%; }
+  .panel-vk .pv-clasif-botones,
+  .panel-vk .tabla-acciones { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 360px) {
+  .brand-title { font-size: 17px; letter-spacing: 1px; }
+  .brand-subtitle { letter-spacing: 3px; }
+  .options-grid,
+  .divisions-grid { grid-template-columns: minmax(0, 1fr); }
+  .panel-vk #competidorTable tbody tr { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .panel-vk #competidorTable .c-nombre { grid-column: span 3; }
 }
