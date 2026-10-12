@@ -458,9 +458,9 @@ function setupInscripcionForm() {
     e.stopPropagation();
     comprobanteArchivo = { dataUrl: null, blob: null, nombre: '', tipo: '' };
     regComprobante.value = '';
-    previewContainer.style.display = 'none';
-    imgPreview.src = '';
-    imgPreview.style.display = 'none';
+    previewContainer.hidden = true;
+    imgPreview.removeAttribute('src');
+    imgPreview.hidden = true;
     fileNameSpan.textContent = '';
   });
 
@@ -482,7 +482,7 @@ function setupInscripcionForm() {
     comprobanteArchivo.nombre = file.name;
     comprobanteArchivo.tipo = file.type;
     fileNameSpan.textContent = `Archivo: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-    previewContainer.style.display = 'flex';
+    previewContainer.hidden = false;
 
     if (file.type.startsWith('image/')) {
       // Las fotos del celular pesan varios MB: se reducen antes de guardarlas
@@ -492,7 +492,7 @@ function setupInscripcionForm() {
         comprobanteArchivo.blob = dataUrlABlob(dataUrl);
         comprobanteArchivo.tipo = 'image/jpeg';
         imgPreview.src = dataUrl;
-        imgPreview.style.display = 'block';
+        imgPreview.hidden = false;
         const kb = Math.round((dataUrl.length * 3 / 4) / 1024);
         fileNameSpan.textContent = `Archivo: ${file.name} (${kb} KB)`;
       }).catch(() => {
@@ -501,13 +501,14 @@ function setupInscripcionForm() {
         reader.onload = (ev) => {
           comprobanteArchivo.dataUrl = ev.target.result;
           imgPreview.src = ev.target.result;
-          imgPreview.style.display = 'block';
+          imgPreview.hidden = false;
         };
         reader.readAsDataURL(file);
       });
     } else {
       // PDF o documento
-      imgPreview.style.display = 'none';
+      imgPreview.removeAttribute('src');
+      imgPreview.hidden = true;
       comprobanteArchivo.dataUrl = null;
       comprobanteArchivo.blob = file;
       comprobanteArchivo.tipo = file.type || 'application/pdf';
@@ -551,7 +552,7 @@ function setupInscripcionForm() {
       musicaArchivo.url = URL.createObjectURL(file);
       musicaFileName.textContent = `Pista MP3: ${file.name}`;
       musicaAudioPreview.src = musicaArchivo.url;
-      musicaPreviewContainer.style.display = 'flex';
+      musicaPreviewContainer.hidden = false;
     }
   });
 
@@ -560,8 +561,9 @@ function setupInscripcionForm() {
     if (musicaArchivo.url) URL.revokeObjectURL(musicaArchivo.url);
     musicaArchivo = { nombre: '', url: null, file: null };
     regMusica.value = '';
-    musicaAudioPreview.src = '';
-    musicaPreviewContainer.style.display = 'none';
+    musicaAudioPreview.removeAttribute('src');
+    musicaAudioPreview.load();
+    musicaPreviewContainer.hidden = true;
     musicaFileName.textContent = '';
   });
 
@@ -679,13 +681,15 @@ function setupInscripcionForm() {
     // Limpiar formulario
     formInscripcion.reset();
     comprobanteArchivo = { dataUrl: null, blob: null, nombre: '', tipo: '' };
-    previewContainer.style.display = 'none';
-    imgPreview.src = '';
+    previewContainer.hidden = true;
+    imgPreview.removeAttribute('src');
+    imgPreview.hidden = true;
     fileNameSpan.textContent = '';
     if (musicaArchivo.url) URL.revokeObjectURL(musicaArchivo.url);
     musicaArchivo = { nombre: '', url: null, file: null };
-    musicaPreviewContainer.style.display = 'none';
-    musicaAudioPreview.src = '';
+    musicaPreviewContainer.hidden = true;
+    musicaAudioPreview.removeAttribute('src');
+    musicaAudioPreview.load();
     musicaFileName.textContent = '';
   });
 
@@ -696,7 +700,7 @@ function setupInscripcionForm() {
 
   if (btnCerrarModal) {
     btnCerrarModal.addEventListener('click', () => {
-      registroModal.style.display = 'none';
+      registroModal.hidden = true;
     });
   }
 
@@ -716,6 +720,7 @@ function mostrarTicketAtleta(atleta) {
   document.getElementById('ticketDivision').textContent = atleta.division;
   document.getElementById('ticketCiudad').textContent = atleta.ciudad;
 
+  modal.hidden = false;
   modal.style.display = 'flex';
 }
 

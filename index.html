@@ -2205,7 +2205,7 @@ document.addEventListener('keydown', function(e) {
   <div id="vistaInscripcion" style="display: none;">
     <header class="main-header">
       <div class="header-inner">
-        <div class="brand" onclick="volverAPaginaPrincipal()" style="cursor: pointer;" title="Volver a la Página Principal">
+        <div class="brand">
           <span class="brand-axe"></span>
           <div class="brand-text">
             <span class="brand-title">VIKINGOS CLASSIC</span>
@@ -2213,9 +2213,6 @@ document.addEventListener('keydown', function(e) {
           </div>
         </div>
         <nav class="nav-tabs">
-          <button type="button" class="nav-tab active" onclick="volverAPaginaPrincipal()">
-            ← Volver a la Página Principal
-          </button>
           <button type="button" class="nav-tab" onclick="abrirPanelJueces()">
             Panel de Jueces
           </button>
@@ -2476,13 +2473,13 @@ document.addEventListener('keydown', function(e) {
             <p class="field-hint">Sube una fotografía nítida o PDF del comprobante de transferencia bancaria (Máx. 10MB).</p>
             
             <div class="file-upload-box" id="comprobanteDropzone" role="group" tabindex="0" aria-label="Seleccionar comprobante de pago" aria-controls="regComprobante">
-              <input type="file" id="regComprobante" accept="image/jpeg,image/png,image/webp,.pdf"  required>
+              <input type="file" id="regComprobante" accept="image/jpeg,image/png,image/webp,.pdf" style="display: none;" required>
               <div class="upload-icon"></div>
               <p class="upload-text"><span class="solo-pc"><strong>Haz clic aquí para seleccionar archivo</strong> o arrástralo y suéltalo</span><span class="solo-movil"><strong>Toca aquí para subir la foto o el PDF</strong> del comprobante</span></p>
               <span class="upload-subtext">Formatos permitidos: JPG, PNG, WEBP, PDF (Hasta 10MB)</span>
               
-              <div id="comprobantePreviewContainer" class="preview-box" >
-                <img id="comprobanteImgPreview" src="" alt="Vista previa del comprobante" >
+              <div id="comprobantePreviewContainer" class="preview-box" hidden>
+                <img id="comprobanteImgPreview" alt="Vista previa del comprobante" hidden>
                 <div class="preview-details">
                   <span id="comprobanteFileName" class="file-name"></span>
                   <button type="button" id="removerComprobanteBtn" class="btn-remove-file">Quitar archivo</button>
@@ -2497,12 +2494,12 @@ document.addEventListener('keydown', function(e) {
             <p class="field-hint">Si tu categoría incluye coreografía / rutina individual libre, sube aquí tu pista en formato MP3 (Máx. 10MB).</p>
             
             <div class="file-upload-box audio-upload-box" id="musicaDropzone" role="group" tabindex="0" aria-label="Seleccionar pista MP3" aria-controls="regMusica">
-              <input type="file" id="regMusica" accept="audio/mp3,audio/mpeg" >
+              <input type="file" id="regMusica" accept="audio/mp3,audio/mpeg" style="display: none;">
               <div class="upload-icon"></div>
               <p class="upload-text"><strong>Selecciona tu pista de audio MP3</strong> (Opcional)</p>
               <span class="upload-subtext">Formato: MP3 (Duración máx. 60 a 90 segundos)</span>
 
-              <div id="musicaPreviewContainer" class="audio-preview-box" >
+              <div id="musicaPreviewContainer" class="audio-preview-box" hidden>
                 <span id="musicaFileName" class="file-name"></span>
                 <audio id="musicaAudioPreview" controls style="width: 100%; margin-top: 10px;"></audio>
                 <button type="button" id="removerMusicaBtn" class="btn-remove-file" style="margin-top: 8px;">Quitar audio</button>
@@ -2532,7 +2529,7 @@ document.addEventListener('keydown', function(e) {
       </div>
 
       <!-- Modal de Confirmación / Ticket de Atleta -->
-      <div id="registroModal" class="modal-overlay" >
+      <div id="registroModal" class="modal-overlay" hidden>
         <div class="modal-card">
           <div class="modal-header">
             <span class="modal-axe"></span>

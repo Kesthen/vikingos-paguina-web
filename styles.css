@@ -46,6 +46,22 @@
   padding: 0;
 }
 
+:focus-visible {
+  outline: 2px solid var(--gold-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body.modo-inscripcion,
 body.modo-panel {
   font-family: 'Outfit', sans-serif;
@@ -170,6 +186,32 @@ body.modo-panel {
   width: 100%;
   margin: 0 auto;
   padding: 40px 20px 80px;
+}
+
+.back-nav-container {
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 0 20px;
+}
+
+.btn-back-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: rgba(169, 79, 74, 0.2);
+  color: var(--text-main);
+  font: 600 14px 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-back-home:hover {
+  background: var(--primary-red);
+  border-color: var(--primary-light);
 }
 
 .content-section {
@@ -706,6 +748,13 @@ input::placeholder {
   z-index: 999;
   padding: 20px;
   animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay[hidden],
+.preview-box[hidden],
+.audio-preview-box[hidden],
+#comprobanteImgPreview[hidden] {
+  display: none !important;
 }
 
 @keyframes fadeIn {
