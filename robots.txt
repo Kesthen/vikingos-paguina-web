@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: Sitemap: https://vikingosclassic.netlify.app/sitemap.xml
+Sitemap: https://vikingosclassic.com/sitemap.xml
