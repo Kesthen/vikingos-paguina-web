@@ -1010,7 +1010,7 @@ const CLASSIC_PHYSIQUE_TIERS = [
   { clase: 'B', maxEstatura: 1.73, maxPeso: 84.8 },
   { clase: 'B', maxEstatura: 1.75, maxPeso: 88.0 },
   { clase: 'B', maxEstatura: 1.78, maxPeso: 91.6 },
-  { clase: 'C', maxEstatura: 1.80, maxPeso: 84.8 },
+  { clase: 'C', maxEstatura: 1.80, maxPeso: 94.8 },
   { clase: 'C', maxEstatura: 1.83, maxPeso: 98.4 },
   { clase: 'D', maxEstatura: 1.85, maxPeso: 101.6 },
   { clase: 'D', maxEstatura: 1.88, maxPeso: 105.2 },
